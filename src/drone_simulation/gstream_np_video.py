@@ -91,8 +91,12 @@ def extract_buffer(sample: Gst.Sample) -> np.ndarray:
     w, h = caps_format.get_value('width'), caps_format.get_value('height')
     c = utils.get_num_channels(video_format)
 
+    print("width: ", w, " | height: ", h, " | channels: ", c)
+    # 640, 360, -1
+
     buffer_size = buffer.get_size()
     shape = (h, w, c) if (h * w * c == buffer_size) else buffer_size
+    print("shape of array: ", shape)
     array = np.ndarray(shape=shape, buffer=buffer.extract_dup(0, buffer_size),
                        dtype=utils.get_np_dtype(video_format))
 
@@ -108,18 +112,21 @@ def on_buffer(sink: GstApp.AppSink, data: typ.Any) -> Gst.FlowReturn:
 
     if isinstance(sample, Gst.Sample):
         array = extract_buffer(sample)
-        image = np.reshape(array, (300,-1,3) )
+        # image = np.reshape(array, (640,-1,1) )
+
+        subarray = array[0:640*360]
+        image = np.reshape(subarray, (360,640,1))
+
         if appsink.FIRST_IMAGE:
             # TODO: Reshape array into an image
-            if cv2.imwrite('color_img.jpg',  ):
+            if cv2.imwrite('color_img.jpg', image ):
                 print("image saved successfully")
             else:
                 print("image failed to save")
-
             appsink.FIRST_IMAGE = False
-            print("hello?")
-        cv2.imshow("image", array)
-        cv2.waitKey()
+
+            # cv2.imshow("image", image)
+            # cv2.waitKey(1)
 
         print(
             "Received {type} with shape {shape} of type {dtype}".format(type=type(array),
@@ -136,6 +143,8 @@ with GstContext():  # create GstContext (hides MainLoop)
         appsink = pipeline.get_by_cls(GstApp.AppSink)[0]  # get AppSink
         # subscribe to <new-sample> signal
         appsink.FIRST_IMAGE = True
+        # appsink.cap = cv2.VideoCapture(0)
+
         appsink.connect("new-sample", on_buffer, None)
         while not pipeline.is_done:
             time.sleep(.1)
