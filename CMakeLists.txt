@@ -1,0 +1,32 @@
+cmake_minimum_required(VERSION 3.0.2)
+project(ml_comprobo)
+
+find_package(OpenCV REQUIRED )
+find_package(catkin REQUIRED COMPONENTS
+  cv_bridge
+  geometry_msgs
+  image_transport
+  roscpp
+  rospy
+  sensor_msgs
+  std_msgs
+  tf2
+  mavros
+)
+
+catkin_package(
+#  INCLUDE_DIRS include
+#  LIBRARIES ml_comprobo
+#  CATKIN_DEPENDS roscpp rospy std_msgs
+#  DEPENDS system_lib
+)
+
+include_directories(
+# include
+  ${catkin_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
+)
+
+add_executable(offb_node src/drone_simulation/offb_node.cpp)
+
+target_link_libraries(offb_node ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
