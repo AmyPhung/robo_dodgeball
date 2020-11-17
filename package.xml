@@ -57,7 +57,7 @@
   <depend>std_msgs</depend>
   <depend>sensor_msgs</depend>
   <depend>tf2</depend>
-  <depend>mavros</depend>
+  <!-- <depend>mavros</depend> -->
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

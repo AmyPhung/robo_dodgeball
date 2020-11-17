@@ -11,7 +11,6 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   std_msgs
   tf2
-  mavros
 )
 
 catkin_package(
@@ -26,7 +25,3 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
 )
-
-add_executable(offb_node src/drone_simulation/offb_node.cpp)
-
-target_link_libraries(offb_node ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
