@@ -50,6 +50,7 @@
   <!--   <doc_depend>doxygen</doc_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
   <depend>cv_bridge</depend>
+  <depend>gazebo_msgs</depend>
   <depend>geometry_msgs</depend>
   <depend>image_transport</depend>
   <depend>roscpp</depend>
@@ -57,6 +58,7 @@
   <depend>std_msgs</depend>
   <depend>sensor_msgs</depend>
   <depend>tf2</depend>
+  <depend>tf2_ros</depend>
   <!-- <depend>mavros</depend> -->
 
   <!-- The export tag contains other, unspecified, tags -->
