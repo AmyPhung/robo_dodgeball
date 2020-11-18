@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 
+# ROS Imports
 import rospy
 from gazebo_msgs.msg import ModelStates
 from geometry_msgs.msg import Twist
+
+# Python Imports
+import numpy as np
 
 """
 Machine learning pipeline
@@ -34,12 +38,22 @@ class DataRecorder():
         # ROS Parameters ------------------------------------------------------
         # Name of the dodgeballs - used to extract model states from gazebo
         self.dodgeball_prefix = rospy.get_param('dodgeball_prefix', 'unit_sphere')
+        # Name of the robot model - used to extract model state from gazebo
+        self.robot_name = rospy.get_param('robot_name', 'mobile_base')
         # Number of closest dodgeballs to keep track of
         self.num_dodgeballs = rospy.get_param('num_dodgeballs', 1)
 
         # Loop update rate
         rate = rospy.get_param('~rate', 10) # in hz
         self.update_rate = rospy.Rate(rate)
+
+        # Internal vars -------------------------------------------------------
+        self.output_data = self._initOutputData()
+
+    def _initOutputData(self):
+        # Make a list for vel_cmd, and dist & angle for each dodgeball
+        output_data = [[] for x in range(1+self.num_dodgeballs*2)]
+        return output_data
 
     def modelStateCB(self, msg):
         """ Save incoming model state msg. Does not handle any computation
@@ -50,6 +64,53 @@ class DataRecorder():
         """ Save incoming twist msg. Does not handle any computation
         to ensure the most recent messages are used """
         self.twist_msg = msg
+
+    def _computeModelDistance(self, model1_idx, model2_idx):
+        """ Computes distance between two models in the current model
+        state message """
+        m1_pos = self.model_state_msg.pose[model1_idx].position
+        m2_pos = self.model_state_msg.pose[model2_idx].position
+
+        m1_vec = np.array([m1_pos.x, m1_pos.y, m1_pos.z])
+        m2_vec = np.array([m2_pos.x, m2_pos.y, m2_pos.z])
+
+        squared_dist = np.sum((m1_vec-m2_vec)**2, axis=0)
+        dist = np.sqrt(squared_dist)
+        return dist
+
+    def _computeModelAngle(self, robot_idx, ball_idx):
+        """ Computes angle between current ball trajectory (assuming linear)
+        and position of the robot. 0 means the ball is headed directly
+        towards the robot, -180 or 180 means the ball is headed
+        directly away from the robot. Currently only handles 2d case """
+        # Assumes these are all in world coords
+        r_pos = self.model_state_msg.pose[robot_idx].position
+        b_pos = self.model_state_msg.pose[ball_idx].position
+        b_vel = self.model_state_msg.twist[ball_idx].linear
+
+        r_pos_vec = np.array([r_pos.x, r_pos.y])
+        b_pos_vec = np.array([b_pos.x, b_pos.y])
+        b_vel_vec = np.array([b_vel.x, b_vel.y])
+
+        # Compute the angle between the ball trajectory and direction to robot
+        vec_to_robot = r_pos_vec - b_pos_vec
+        vec_to_robot, b_vel_vec
+
+        # If ball isn't moving, return pi
+        if (b_vel_vec[0]==0 and b_vel_vec[1]==0):
+            return np.pi
+
+        unit_vec_to_robot = vec_to_robot / np.linalg.norm(vec_to_robot)
+        unit_b_vel_vec = b_vel_vec / np.linalg.norm(b_vel_vec)
+        dot_product = np.dot(unit_vec_to_robot, unit_b_vel_vec)
+        angle = np.arccos(dot_product)
+
+        # Append sign to calculation
+        cross_product = np.cross(vec_to_robot, b_vel_vec)
+        if (cross_product < 0):
+            angle = -angle
+
+        return angle
 
     def recordDataPoint(self):
         """ Get n closest dodgeballs, save to dataset.
@@ -63,7 +124,21 @@ class DataRecorder():
              towards the neato, -180 or 180 means the ball is headed
              directly away from the neato) (defaults to 180 if ball is not there)
         """
-        pass
+        vel_cmd = self.twist_msg.linear.x
+
+        # Get model index
+        m_idx = 0
+        try:
+            m_idx = self.model_state_msg.name.index(self.robot_name)
+        except ValueError:
+            return
+
+        # Parse gazebo model message
+        for b_idx, m_name in enumerate(self.model_state_msg.name):
+            # Check to make sure we're looking at a ball
+            if self._containsPrefix(self.dodgeball_prefix, m_name):
+                dist = self._computeModelDistance(m_idx, b_idx)
+                angle = self._computeModelAngle(m_idx, b_idx)
 
     def writeDataToFile(self, filename):
         pass
@@ -75,8 +150,11 @@ class DataRecorder():
         else:
             return False
 
+
+
     def run(self):
         while not rospy.is_shutdown():
+            self.recordDataPoint()
             self.update_rate.sleep()
 
 if __name__ == "__main__":
