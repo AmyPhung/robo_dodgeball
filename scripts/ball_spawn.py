@@ -3,56 +3,137 @@ from __future__ import print_function, division
 import rospy
 from neato_node.msg import Bump
 from std_msgs.msg import Int8MultiArray
-from geometry_msgs.msg import Twist, Vector3
+from geometry_msgs.msg import Twist, Vector3, Pose, Point, Quaternion
+from gazebo_msgs.srv import DeleteModel, SpawnModel, SetModelState, GetModelState
+from gazebo_msgs.msg import ModelState
 from visualization_msgs.msg import Marker
 import tty
 import select
 import sys
 import termios
-import cv2
+import random
+import tf
 import math
-
 import os
-import time
-import tensorflow as tf
-import numpy as np
 
 settings = termios.tcgetattr(sys.stdin)
-key = None
 
 class ball_spawn(object):
     def __init__(self):
         rospy.init_node('ball_spawn')
+        print("Waiting for gazebo services...")
+        rospy.wait_for_service("gazebo/spawn_sdf_model")
+        rospy.wait_for_service("gazebo/delete_model")
+        rospy.wait_for_service("gazebo/set_model_state")
+        rospy.wait_for_service("gazebo/get_model_state")
+        print("Services done")
+
+        self.delete_model = rospy.ServiceProxy("gazebo/delete_model", DeleteModel)
+        self.spawn_model = rospy.ServiceProxy("gazebo/spawn_sdf_model", SpawnModel)
+        self.set_model = rospy.ServiceProxy("gazebo/set_model_state", SetModelState)
+        self.get_model = rospy.ServiceProxy("gazebo/get_model_state", GetModelState)
         # rospy.Subscriber('/bump', Int8MultiArray, self.process_bump)
         self.pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
-        self.desired_vel = 0.0
-        self.angular_vel = 0.0
 
-        naming = "ball"
-        straight = {"max_balls": 1, "spawn_rg": (-2,2, 5,5), "target": "straight", "l_vel_rg": (1,1), "a_vel_rg": (0,0), "color": None, "size_rg": (1,1)}
-        modes = {"straight":straight}
+        self.naming = "ball"
+        self.ball_num = 0
+        self.ball_names = [] # List to keep track of which balls are in frame
+        straight = {"max_balls":5, "spawn_rg": (-4,4, 5,5), "target": "straight", "l_vel_rg": (-5,-1), "a_vel_rg": (-5,-5), "color": None, "size_rg": (1,1)}
 
+        # Set the mode of ball spawnign
+        self.mode = straight
+
+        self.dodgeball = open(os.path.expanduser('~/catkin_ws/src/ml_comprobofinal/model/dodgeball/model.sdf'), 'r').read()
+
+    def gen_pose(self,x, y, z=0, theta=0):
+        # Returns particle as Pose object
+        orientation_tuple = tf.transformations.quaternion_from_euler(0, 0, theta) # generates orientation from euler
+        return Pose(position=Point(x=x, y=y, z=z),
+                    orientation=Quaternion(x=orientation_tuple[0],
+                                           y=orientation_tuple[1],
+                                           z=orientation_tuple[2],
+                                           w=orientation_tuple[3]))
     def gen_ball_loc(self):
-        loc = 0
-        return loc
+        """Generate the starting location of the ball based on mode"""
+        spawn_rg = self.mode["spawn_rg"]
+        x = random.uniform(spawn_rg[0], spawn_rg[1])
+        y = random.uniform(spawn_rg[2], spawn_rg[3])
+        z = random.uniform(0, 0)
+        return x, y, z
 
-    def gen_ball_vel(self):
-        vel = 0
-        return vel
+    def gen_ball_vel(self, loc):
+        """Generates the ball's velocity depending on the mode
+        returns Velocity to be set in Twist message """
+        method = self.mode["target"]
+        l_vel_rg = self.mode["l_vel_rg"]
+        a_vel_rg = self.mode["a_vel_rg"]
+        a_vel = random.uniform(a_vel_rg[0], a_vel_rg[1])
+        l_vel = random.uniform(l_vel_rg[0], l_vel_rg[1])
 
-    def gen_ball_mess(self):
-        ball_mess = None
-        return ball_mess
+        # Adjust the direction of the l_vel depending on targetting
+        if method == "straight":
+            pass
+        elif method == "neato":
+            pass
+        elif method == "center":
+            pass
+        else: # method == "random":
+            pass
+        return l_vel, a_vel
 
-    def pub_ball_mess(self):
-        pass
+    def gen_ball(self):
+        x, y, z = self.gen_ball_loc()
+        l_vel, a_vel = self.gen_ball_vel((x, y))
+        print("x:{} y:{} x:{}".format(x, y, z))
+        print("a_vel: {} l_vel: {}".format(a_vel, l_vel))
+        ball_pose = self.gen_pose(x,y)
+        ball_name = self.naming + str(self.ball_num)
+        self.ball_names.append(ball_name) # Add the ball to keep track of it
+        ball_twist = Twist(linear=Vector3(x=0, y = l_vel), angular=Vector3(z=0))
+        model_state = ModelState(
+            model_name=ball_name,
+            pose=ball_pose,
+            twist=ball_twist)
+        self.spawn_model(
+            model_name=ball_name,
+            model_xml=self.dodgeball,
+            robot_namespace='',
+            initial_pose=ball_pose
+        )
+        self.set_model(model_state)
+        self.ball_num += 1
 
     def cleanup_balls(self):
         """
         Removes balls if they have past the robot.
         returns: True if a new ball should be spawned, False if not
         """
-        pass
+        for num, ball in enumerate(self.ball_names):
+            #Get the model state (check if it has gone past the robot)
+            world_pose = self.get_model(ball, "world").pose #
+            neato_pose = self.get_model(ball, "mobile_base::base_footprint").pose
+            #print("World: {} \nNeato: {}".format(world_pose, neato_pose))
+
+            # Delwte ones that are gone
+            if neato_pose.position.y <= 0:
+                self.delete_model(ball)
+                del self.ball_names[num]
+
+    def manage_balls(self):
+        # CLeanup the balls
+        self.cleanup_balls()
+
+        # Check if we have less than the max num balls
+        #print("ball list: {} Mode_max: {}".format(self.ball_names, self.mode["max_balls"]))
+        while len(self.ball_names) < self.mode["max_balls"]:
+            #print("generating more balls!!!")
+            self.gen_ball()
+
+    def remove_all_balls(self, num=20):
+        for ball_num in range(num):
+            self.delete_model(self.naming + str(ball_num))
+        self.ball_names = []
+
 
     def getKey(self):
         tty.setraw(sys.stdin.fileno())
@@ -68,15 +149,28 @@ class ball_spawn(object):
     #         print("stop")
 
     def run(self):
-        r = rospy.Rate(10)
-        while not rospy.is_shutdown():
-            self.pub.publish(Twist(linear=Vector3(x=self.desired_vel), angular=Vector3(z=self.angular_vel)))
-            r.sleep()
-            key = self.getKey()
+        r = rospy.Rate(100)
+        print('Cleaning the playpen')
+        self.remove_all_balls(200)
+        print("Time for some dodgeball!")
 
-            self.pub.publish(Twist(linear=Vector3(x=lin_v), angular=Vector3(z=ang_v)))
+        while not rospy.is_shutdown():
+            r.sleep()
+            self.manage_balls()
+            # key = self.getKey()
+            #
+            # if key ==' ':
+            #     print("Generate ball!!!!")
+            #
+            #
+            # elif key == 'q':
+            #     self.remove_all_balls(self.ball_num+1)
+            #     break
+
+        self.pub.publish(Twist(linear=Vector3(x=0), angular=Vector3(z=0)))
 
 if __name__ == '__main__':
     ball_spawner = ball_spawn()
+
     ball_spawner.run()
 
