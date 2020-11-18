@@ -38,7 +38,7 @@ class ball_spawn(object):
         self.naming = "ball"
         self.ball_num = 0
         self.ball_names = [] # List to keep track of which balls are in frame
-        straight = {"max_balls":5, "spawn_rg": (-4,4, 5,5), "target": "straight", "l_vel_rg": (-5,-1), "a_vel_rg": (-5,-5), "color": None, "size_rg": (1,1)}
+        straight = {"max_balls":1, "spawn_rg": (-2,2, 5,5), "target": "straight", "l_vel_rg": (5,2), "a_vel_rg": (-5,-5), "color": None, "size_rg": (1,1)}
 
         # Set the mode of ball spawnign
         self.mode = straight
@@ -69,27 +69,40 @@ class ball_spawn(object):
         a_vel_rg = self.mode["a_vel_rg"]
         a_vel = random.uniform(a_vel_rg[0], a_vel_rg[1])
         l_vel = random.uniform(l_vel_rg[0], l_vel_rg[1])
+        spawn_rg = self.mode["spawn_rg"]
 
         # Adjust the direction of the l_vel depending on targetting
         if method == "straight":
-            pass
+            x_tar = loc[0]
+            y_tar = 0
         elif method == "neato":
-            pass
+            neato_pose = self.get_model("mobile_base", "world").pose
+            print(neato_pose)
+            x_tar = neato_pose.position.x
+            y_tar = 0
         elif method == "center":
-            pass
+            x_tar = 0
+            y_tar = 0
         else: # method == "random":
-            pass
-        return l_vel, a_vel
+            x_tar = random.uniform(spawn_rg[0], spawn_rg[1])
+            y_tar = 0
+        # Generate the velocities
+        y_to_target = y_tar - loc[1]
+        x_to_target = x_tar - loc[0]
+        magnitude = math.sqrt(y_to_target ** 2 + x_to_target ** 2)
+        l_vel_x = l_vel * x_to_target / magnitude
+        l_vel_y = l_vel * y_to_target / magnitude
+        return l_vel_x, l_vel_y, a_vel
 
     def gen_ball(self):
         x, y, z = self.gen_ball_loc()
-        l_vel, a_vel = self.gen_ball_vel((x, y))
+        l_vel_x, l_vel_y, a_vel = self.gen_ball_vel((x, y))
         print("x:{} y:{} x:{}".format(x, y, z))
-        print("a_vel: {} l_vel: {}".format(a_vel, l_vel))
-        ball_pose = self.gen_pose(x,y)
+        print("a_vel: {} l_vel_x: {} l_vel_y: {}".format(a_vel, l_vel_x, l_vel_y))
+        ball_pose = self.gen_pose(x, y)
         ball_name = self.naming + str(self.ball_num)
         self.ball_names.append(ball_name) # Add the ball to keep track of it
-        ball_twist = Twist(linear=Vector3(x=0, y = l_vel), angular=Vector3(z=0))
+        ball_twist = Twist(linear=Vector3(x=l_vel_x, y=l_vel_y), angular=Vector3(z=0))
         model_state = ModelState(
             model_name=ball_name,
             pose=ball_pose,
@@ -111,7 +124,7 @@ class ball_spawn(object):
         for num, ball in enumerate(self.ball_names):
             #Get the model state (check if it has gone past the robot)
             world_pose = self.get_model(ball, "world").pose #
-            neato_pose = self.get_model(ball, "mobile_base::base_footprint").pose
+            neato_pose = self.get_model(ball, "mobile_base").pose
             #print("World: {} \nNeato: {}".format(world_pose, neato_pose))
 
             # Delwte ones that are gone
