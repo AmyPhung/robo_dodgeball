@@ -4,6 +4,7 @@ project(ml_comprobo)
 find_package(OpenCV REQUIRED )
 find_package(catkin REQUIRED COMPONENTS
   cv_bridge
+  gazebo_msgs
   geometry_msgs
   image_transport
   roscpp
@@ -11,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   std_msgs
   tf2
+  tf2_ros
 )
 
 catkin_package(
@@ -25,6 +27,3 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
 )
-
-
-# target_link_libraries(offb_node ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
