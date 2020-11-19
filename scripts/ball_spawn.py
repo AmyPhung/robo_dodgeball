@@ -38,7 +38,7 @@ class ball_spawn(object):
         self.naming = "ball"
         self.ball_num = 0
         self.ball_names = [] # List to keep track of which balls are in frame
-        straight = {"max_balls":1, "spawn_rg": (-2,2, 5,5), "target": "straight", "l_vel_rg": (5,2), "a_vel_rg": (-5,-5), "color": None, "size_rg": (1,1)}
+        straight = {"max_balls":10, "spawn_rg": (-3,3, 5,5), "target": "random", "l_vel_rg": (6,3), "a_vel_rg": (-5,-5), "color": None, "size_rg": (1,1)}
 
         # Set the mode of ball spawnign
         self.mode = straight
