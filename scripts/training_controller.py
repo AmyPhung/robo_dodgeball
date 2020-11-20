@@ -4,6 +4,7 @@
 Custom keyboard teleop for data collection. Modified version of
 https://github.com/ros-teleop/teleop_twist_keyboard/blob/master/teleop_twist_keyboard.py
 
+Hit s to start the ball spawning
 Hit spacebar when ready to save data.
 """
 

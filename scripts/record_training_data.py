@@ -10,19 +10,6 @@ from std_msgs.msg import Bool
 import numpy as np
 from operator import itemgetter
 
-"""
-Machine learning pipeline
-
-
-Right now, can build data recording for tracking n closest objects, and setting excess objects to arbitrarily large values
-if far away.
-
-publish tf for all objects
-
-eventually, we'll want a topic anyways - it should be fine to just use no tfs
-"""
-
-
 class DataRecorder():
     def __init__(self):
         rospy.init_node("data_recorder")
@@ -121,6 +108,14 @@ class DataRecorder():
 
         return angle
 
+    def _computeModelVelocity(self, ball_idx):
+        """ Computes magnitude of the velocity """
+        b_vel = self.model_state_msg.twist[ball_idx].linear
+        b_vel_vec = np.array([b_vel.x, b_vel.y, b_vel.z])
+        vel_magnitude = np.linalg.norm(b_vel_vec)
+
+        return vel_magnitude
+
     def recordDataPoint(self):
         """ Get n closest dodgeballs, save to dataset.
 
@@ -132,6 +127,7 @@ class DataRecorder():
             - angle of ball movement (0 means the ball is headed directly
              towards the neato, -180 or 180 means the ball is headed
              directly away from the neato) (defaults to 180 if ball is not there)
+            - magnitude of velocity
         """
         vel_cmd = self.twist_msg.linear.x
 
@@ -142,8 +138,8 @@ class DataRecorder():
         except ValueError:
             return
 
-        # Temporarily store all ball distances and angles - will filter later
-        dists, angles = [], []
+        # Temporarily store all ball distances, angles, and velocities - will filter later
+        dists, angles, vels = [], [], []
 
         # Parse gazebo model message
         for b_idx, m_name in enumerate(self.model_state_msg.name):
@@ -153,6 +149,8 @@ class DataRecorder():
                 dists.append(dist)
                 angle = self._computeModelAngle(m_idx, b_idx)
                 angles.append(angle)
+                vel = self._computeModelVelocity(b_idx)
+                vels.append(vel)
 
 
         # If we don't have enough dodgeballs, add in a few "dummy" values
@@ -163,15 +161,17 @@ class DataRecorder():
         missing_balls = self.num_dodgeballs - len(dists)
         dists += missing_balls*[1000] # Add dummy balls 1000 meters away
         angles += missing_balls*[np.pi] # Add dummy balls moving away from robot
+        vels += missing_balls*[0] # Add dummy balls with 0 velocity 
 
         # Get indices of n closest balls
         nearest_idxs = np.argpartition(dists, -self.num_dodgeballs)[:self.num_dodgeballs]
         # Get distances and angles of n closest balls
         n_dists = list(itemgetter(*nearest_idxs)(dists))
         n_angles = list(itemgetter(*nearest_idxs)(angles))
+        n_vels = list(itemgetter(*nearest_idxs)(vels))
 
         # Record data point
-        new_pt =  [vel_cmd] + n_dists + n_angles
+        new_pt =  [vel_cmd] + n_dists + n_angles + n_vels
         self.output_data.append(new_pt)
 
     def writeDataToFile(self):
