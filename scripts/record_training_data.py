@@ -161,7 +161,7 @@ class DataRecorder():
         missing_balls = self.num_dodgeballs - len(dists)
         dists += missing_balls*[1000] # Add dummy balls 1000 meters away
         angles += missing_balls*[np.pi] # Add dummy balls moving away from robot
-        vels += missing_balls*[0] # Add dummy balls with 0 velocity 
+        vels += missing_balls*[0] # Add dummy balls with 0 velocity
 
         # Get indices of n closest balls
         nearest_idxs = np.argpartition(dists, -self.num_dodgeballs)[:self.num_dodgeballs]
@@ -177,7 +177,8 @@ class DataRecorder():
     def writeDataToFile(self):
         if self.save_filename != None:
             np_data = np.array(self.output_data)
-            np_data_t = np_data.transpose
+            np_data_t = np_data.transpose()
+            np.savetxt(self.save_filename, np_data_t)
             np.save(self.save_filename, np_data_t)
             rospy.loginfo("Dataset saved!")
         else:
