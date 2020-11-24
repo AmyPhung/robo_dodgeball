@@ -18,6 +18,7 @@ class DataRecorder():
         # Publishers and Subscribers ------------------------------------------
         self.model_state_sub = rospy.Subscriber("/gazebo/model_states",
             ModelStates, self.modelStateCB)
+        self.run_sub = rospy.Subscriber("spawn_cmd", Bool, self.process_run_sub)  # Spawnin will start or stop when this is recieved
         self.twist_sub = rospy.Subscriber("/cmd_vel",
             Twist, self.twistCB)
         self.save_sub = rospy.Subscriber("save_cmd",
@@ -48,6 +49,11 @@ class DataRecorder():
         # Internal vars -------------------------------------------------------
         self.output_data = []
         self.done = False
+        self.spawn = False
+
+    def process_run_sub(self, msg):
+        # Change the running flag!
+        self.spawn = msg.data
 
     def modelStateCB(self, msg):
         """ Save incoming model state msg. Does not handle any computation
@@ -188,8 +194,8 @@ class DataRecorder():
         # an empty list
         missing_balls = self.num_dodgeballs - len(dists)
         dists += missing_balls*[1000] # Add dummy balls 1000 meters away
-        angles += missing_balls*[np.pi] # Add dummy balls moving away from robot
-        vels += missing_balls*[0] # Add dummy balls with 0 velocity
+        # angles += missing_balls*[np.pi] # Add dummy balls moving away from robot
+        # vels += missing_balls*[0] # Add dummy balls with 0 velocity
 
         # Add dummy balls in
         dummy_ball = [[0,100,0,0]]
@@ -198,9 +204,9 @@ class DataRecorder():
         # Get indices of n closest balls
         nearest_idxs = np.argpartition(dists, -self.num_dodgeballs)[:self.num_dodgeballs]
         # Get distances and angles of n closest balls
-        n_dists = list(itemgetter(*nearest_idxs)(dists))
-        n_angles = list(itemgetter(*nearest_idxs)(angles))
-        n_vels = list(itemgetter(*nearest_idxs)(vels))
+        # n_dists = list(itemgetter(*nearest_idxs)(dists))
+        # n_angles = list(itemgetter(*nearest_idxs)(angles))
+        # n_vels = list(itemgetter(*nearest_idxs)(vels))
 
         n_balls = list(itemgetter(*nearest_idxs)(balls))
         n_balls = list(itertools.chain(*n_balls))
@@ -228,10 +234,11 @@ class DataRecorder():
 
     def run(self):
         while not rospy.is_shutdown():
-            if self.done == True:
+            if self.done:
                 self.writeDataToFile()
                 return
-            self.recordDataPoint()
+            if self.spawn:
+                self.recordDataPoint()
             self.update_rate.sleep()
 
 if __name__ == "__main__":
