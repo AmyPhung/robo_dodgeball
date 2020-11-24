@@ -14,8 +14,8 @@ author: Ever Gonzalez, Amy Phung, Nathan Faber
 # --- List of links in the navigation bar --- #
 
 navbar-links:
-  About Us: "about"
-  Author's home: ""
+  Blog: "blog"
+#  About Us: "about"
 
 # --- Logo --- #
 
