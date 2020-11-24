@@ -16,11 +16,11 @@
   <node type="ball_spawn.py" name="ball_spawn"
     pkg="ml_comprobo" output="screen">
     <!--Specifies trajectory of balls (center, straight, neato, random)-->
-    <param name="targeting" value="random"/>
+    <param name="targeting" value="neato"/>
 
     <!--SPAWNING BOX FOR THE BALLS-->
-    <param name="spawn_x_min" value="-3"/>
-    <param name="spawn_x_max" value="3"/>
+    <param name="spawn_x_min" value="-1.5"/>
+    <param name="spawn_x_max" value="1.5"/>
     <param name="spawn_y_min" value="5"/>
     <param name="spawn_y_max" value="5"/>
     <!--VELOCITY RANGE FOR BALLS-->
