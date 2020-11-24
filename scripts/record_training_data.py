@@ -8,6 +8,7 @@ from std_msgs.msg import Bool
 
 # Python Imports
 import numpy as np
+import itertools
 from operator import itemgetter
 
 class DataRecorder():
@@ -73,6 +74,29 @@ class DataRecorder():
         squared_dist = np.sum((m1_vec-m2_vec)**2, axis=0)
         dist = np.sqrt(squared_dist)
         return dist
+
+    def _computeModelVecs(self, robot_idx, ball_idx):
+        """Position of ball and velocity of ball"""
+        r_pos = self.model_state_msg.pose[robot_idx].position
+        b_pos = self.model_state_msg.pose[ball_idx].position
+        b_vel = self.model_state_msg.twist[ball_idx].linear
+
+        r_pos_vec = np.array([r_pos.x, r_pos.y])
+        b_pos_vec = np.array([b_pos.x, b_pos.y])
+        vec_to_robot = r_pos_vec - b_pos_vec  # This is what we care about!
+        b_vel_vec = np.array([b_vel.x, b_vel.y])
+
+        # Compute the angle between the ball trajectory and direction to robot
+        #return np.flatten(vec_to_robot, b_vel_vec)
+
+        vec_r_x =  r_pos.x - b_pos.x
+        vec_r_y = r_pos.y - b_pos.y
+        return np.array([vec_r_x, vec_r_y, b_vel.x, b_vel.y])
+
+    def _computeRobotVecs(self, robot_idx):
+        r_pos = self.model_state_msg.pose[robot_idx].position
+        r_pos_vec = [r_pos.x, r_pos.y]
+        return r_pos_vec
 
     def _computeModelAngle(self, robot_idx, ball_idx):
         """ Computes angle between current ball trajectory (assuming linear)
@@ -141,18 +165,22 @@ class DataRecorder():
         # Temporarily store all ball distances, angles, and velocities - will filter later
         dists, angles, vels = [], [], []
 
+        balls = []
         # Parse gazebo model message
         for b_idx, m_name in enumerate(self.model_state_msg.name):
             # Check to make sure we're looking at a ball
             if self._containsPrefix(self.dodgeball_prefix, m_name):
                 dist = self._computeModelDistance(m_idx, b_idx)
                 dists.append(dist)
-                angle = self._computeModelAngle(m_idx, b_idx)
-                angles.append(angle)
+                # angle = self._computeModelAngle(m_idx, b_idx)
+                # angles.append(angle)
                 vel = self._computeModelVelocity(b_idx)
                 vels.append(vel)
 
-
+                # nathan's tests
+                ball_vecs = self._computeModelVecs(m_idx, b_idx)
+                balls.append(ball_vecs)
+        robot_pos = self._computeRobotVecs(m_idx)
         # If we don't have enough dodgeballs, add in a few "dummy" values
         # These dummy values are equivalent to a dodgeball that would be
         # sufficiently far away headed in the wrong direction
@@ -163,6 +191,10 @@ class DataRecorder():
         angles += missing_balls*[np.pi] # Add dummy balls moving away from robot
         vels += missing_balls*[0] # Add dummy balls with 0 velocity
 
+        # Add dummy balls in
+        dummy_ball = [[0,100,0,0]]
+        balls += missing_balls*dummy_ball
+
         # Get indices of n closest balls
         nearest_idxs = np.argpartition(dists, -self.num_dodgeballs)[:self.num_dodgeballs]
         # Get distances and angles of n closest balls
@@ -170,14 +202,17 @@ class DataRecorder():
         n_angles = list(itemgetter(*nearest_idxs)(angles))
         n_vels = list(itemgetter(*nearest_idxs)(vels))
 
+        n_balls = list(itemgetter(*nearest_idxs)(balls))
+        n_balls = list(itertools.chain(*n_balls))
         # Record data point
-        new_pt =  [vel_cmd] + n_dists + n_angles + n_vels
+        new_pt = [vel_cmd] + n_balls + robot_pos # n_dists + n_angles + n_vels + n_robot_pos + n_ball_pos + n_ball_vel
         self.output_data.append(new_pt)
 
     def writeDataToFile(self):
         if self.save_filename != None:
             np_data = np.array(self.output_data)
-            np_data_t = np_data.transpose()
+            print(np_data.shape)
+            np_data_t = np_data #.transpose()
             np.savetxt(self.save_filename, np_data_t)
             np.save(self.save_filename, np_data_t)
             rospy.loginfo("Dataset saved!")
