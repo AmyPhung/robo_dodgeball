@@ -5,8 +5,12 @@
     <param name="robot_name" value="mobile_base"/>
     <param name="num_dodgeballs" value="2"/>
 
-  <node type="run_model.py" name="run_model"
+  <node type="record_training_data.py" name="record_training_data"
     pkg="ml_comprobo" output="screen">
+    <param name="~save_filename" value="$(find ml_comprobo)/datasets/test.npy"/>
+    <param name="~run_model" value="1"/>
+    <param name="~model_path" value="LTSM_straight"/>
+    <!--<param name="~model_type" value="tf"/>-->
   </node>
   <node type="ball_spawn.py" name="ball_spawn"
     pkg="ml_comprobo" output="screen">
