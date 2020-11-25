@@ -3,12 +3,13 @@
 # ROS Imports
 import rospy
 from gazebo_msgs.msg import ModelStates
-from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Twist, Vector3
 from std_msgs.msg import Bool
 
 # Python Imports
 import numpy as np
 import itertools
+import os
 from operator import itemgetter
 
 class DataRecorder():
@@ -19,8 +20,7 @@ class DataRecorder():
         self.model_state_sub = rospy.Subscriber("/gazebo/model_states",
             ModelStates, self.modelStateCB)
         self.run_sub = rospy.Subscriber("spawn_cmd", Bool, self.process_run_sub)  # Spawnin will start or stop when this is recieved
-        self.twist_sub = rospy.Subscriber("/cmd_vel",
-            Twist, self.twistCB)
+        self.pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
         self.save_sub = rospy.Subscriber("save_cmd",
             Bool, self.saveCB) # Data collection will end when True is published
 
@@ -35,6 +35,9 @@ class DataRecorder():
         self.robot_name = rospy.get_param('~robot_name', 'mobile_base')
         # Number of closest dodgeballs to keep track of
         self.num_dodgeballs = rospy.get_param('~num_dodgeballs', 5)
+        # Get whether this is a recording or inference
+        self.run_model = rospy.get_param('~run_model', 0)
+
         # Save file location
         if rospy.has_param('~save_filename'):
             self.save_filename = rospy.get_param('~save_filename')
@@ -50,6 +53,19 @@ class DataRecorder():
         self.output_data = []
         self.done = False
         self.spawn = False
+
+        if self.run_model:
+            self.model_path = rospy.get_param('~model_path', "LTSM_straight")
+            if self.model_path is not None:
+                from tensorflow import keras
+                self.model_inputs = None
+                self.model_output = None
+                self.model = keras.models.load_model(
+                    os.path.expanduser("~/catkin_ws/src/ml_comprobofinal/ml_models/" + self.model_path))
+                self.model.summary()
+        else:
+            self.twist_sub = rospy.Subscriber("/cmd_vel", Twist, self.twistCB)
+
 
     def process_run_sub(self, msg):
         # Change the running flag!
@@ -214,6 +230,15 @@ class DataRecorder():
         new_pt = [vel_cmd] + n_balls + robot_pos # n_dists + n_angles + n_vels + n_robot_pos + n_ball_pos + n_ball_vel
         self.output_data.append(new_pt)
 
+    def prepare_data(self, model_depth=5):
+        if len(self.output_data) < model_depth:
+            self.model_inputs = None
+        else:
+            # There is enough data
+            self.model_inputs = self.output_data[-model_depth:]
+            # self.model_inputs = [past_step[1:] for past_step in self.model_inputs]
+            self.model_inputs = np.array(self.model_inputs)[:, 1:]
+
     def writeDataToFile(self):
         if self.save_filename != None:
             np_data = np.array(self.output_data)
@@ -234,11 +259,23 @@ class DataRecorder():
 
     def run(self):
         while not rospy.is_shutdown():
-            if self.done:
+            if self.done and not self.run_model:
                 self.writeDataToFile()
                 return
             if self.spawn:
                 self.recordDataPoint()
+
+                # Send the model inputs if testing the model
+                if self.run_model:
+                    # Prepare model inputs
+                    self.prepare_data()
+                    if self.model_inputs is None:
+                        continue
+                    # Run the inputs through the model
+                    self.model_inputs = self.model_inputs.reshape(
+                        (1, self.model_inputs.shape[0], self.model_inputs.shape[1]))
+                    self.model_output = self.model.predict(np.array(self.model_inputs))
+                    self.pub.publish(Twist(linear=Vector3(x=self.model_output)))
             self.update_rate.sleep()
 
 if __name__ == "__main__":

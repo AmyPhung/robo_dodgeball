@@ -11,6 +11,9 @@
     <param name="dodgeball_prefix" value="$(arg dodgeball_prefix)"/>
     <param name="robot_name" value="$(arg robot_name)"/>
     <param name="num_dodgeballs" value="$(arg num_dodgeballs)"/>
+    <param name="~run_model" value="0"/>
+    <!--<param name="~model_path" value="LTSM_straight"/>
+    <param name="~model_type" value="tf"/>-->
   </node>
 
   <node type="ball_spawn.py" name="ball_spawn"

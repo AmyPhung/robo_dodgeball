@@ -13,7 +13,6 @@ import itertools
 from operator import itemgetter
 import tensorflow as tf
 from tensorflow import keras
-#import tensorflow_hub as hub
 
 
 class DataRecorder():
