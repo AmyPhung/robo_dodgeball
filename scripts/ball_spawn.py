@@ -40,28 +40,31 @@ class ball_spawn(object):
 
         # ROS Parameters ------------------------------------------------------
         # Name of the dodgeballs - used to extract model states from gazebo
-        self.dodgeball_prefix = rospy.get_param('dodgeball_prefix', 'ball')
+        self.dodgeball_prefix = rospy.get_param('~dodgeball_prefix', 'ball')
         # Name of the robot model - used to extract model state from gazebo
-        self.robot_name = rospy.get_param('robot_name', 'mobile_base')
+        self.robot_name = rospy.get_param('~robot_name', 'mobile_base')
         # Number of closest dodgeballs to keep track of
-        self.num_dodgeballs = rospy.get_param('num_dodgeballs', 5)
+        self.num_dodgeballs = rospy.get_param('~num_dodgeballs', 5)
         # Grab the spawn Location!!
-        self.spawn_x_min = rospy.get_param('spawn_x_min', -3)
-        self.spawn_x_max = rospy.get_param('spawn_x_max', 3)
-        self.spawn_y_min = rospy.get_param('spawn_y_min', 5)
-        self.spawn_y_max = rospy.get_param('spawn_y_max', 5)
+        self.spawn_x_min = rospy.get_param('~spawn_x_min', -3)
+        self.spawn_x_max = rospy.get_param('~spawn_x_max', 3)
+        self.spawn_y_min = rospy.get_param('~spawn_y_min', 5)
+        self.spawn_y_max = rospy.get_param('~spawn_y_max', 5)
         # Grab the spawn velocities!!
-        self.a_vel_min = rospy.get_param('a_vel_min', 0)
-        self.a_vel_max = rospy.get_param('a_vel_max', 0)
-        self.l_vel_min = rospy.get_param('l_vel_min', 3)
-        self.l_vel_max = rospy.get_param('l_vel_max', 5)
+        self.a_vel_min = rospy.get_param('~a_vel_min', 0)
+        self.a_vel_max = rospy.get_param('~a_vel_max', 0)
+        self.l_vel_min = rospy.get_param('~l_vel_min', 3)
+        self.l_vel_max = rospy.get_param('~l_vel_max', 5)
         # Grab the targeting method
-        self.targeting = rospy.get_param('targeting', "random")
+        self.targeting = rospy.get_param('~targeting', "random")
 
         # Other dodgeball tracking stuff
         self.ball_num = 0
         self.ball_names = []  # List to keep track of which balls are in frame
-        self.dodgeball = open(os.path.expanduser('~/catkin_ws/src/ml_comprobofinal/model/dodgeball/model.sdf'), 'r').read()
+        if rospy.has_param('~ball_model_file'):
+            self.dodgeball = rospy.get_param('~ball_model_file')
+        else:
+            self.dodgeball = open(os.path.expanduser('~/catkin_ws/src/ml_comprobofinal/model/dodgeball/model.sdf'), 'r').read()
         self.running = False
         self.done = False
 
@@ -195,4 +198,3 @@ if __name__ == '__main__':
     ball_spawner = ball_spawn()
 
     ball_spawner.run()
-

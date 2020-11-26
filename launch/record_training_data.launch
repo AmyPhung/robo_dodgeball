@@ -1,14 +1,18 @@
 <launch>
   <!-- Dataset Recorder Node -->
 
-    <param name="dodgeball_prefix" value="ball"/>
-    <param name="robot_name" value="mobile_base"/>
-    <param name="num_dodgeballs" value="2"/>
+  <arg name="dodgeball_prefix" default="ball"/>
+  <arg name="robot_name" default="mobile_base"/>
+  <arg name="num_dodgeballs" default="2"/>
 
   <node type="record_training_data.py" name="record_training_data"
     pkg="ml_comprobo" output="screen">
     <param name="~save_filename" value="$(find ml_comprobo)/datasets/test.npy"/>
+    <param name="dodgeball_prefix" value="$(arg dodgeball_prefix)"/>
+    <param name="robot_name" value="$(arg robot_name)"/>
+    <param name="num_dodgeballs" value="$(arg num_dodgeballs)"/>
   </node>
+
   <node type="ball_spawn.py" name="ball_spawn"
     pkg="ml_comprobo" output="screen">
     <!--Specifies trajectory of balls (center, straight, neato, random)-->
@@ -24,7 +28,15 @@
     <param name="a_vel_max" value="0"/>
     <param name="l_vel_min" value="3"/>
     <param name="l_vel_max" value="5"/>
+
+    <param name="ball_model_file"
+      value="$(find ml_comprobo)/model/dodgeball/model.sdf"/>
+
+    <param name="dodgeball_prefix" value="$(arg dodgeball_prefix)"/>
+    <param name="robot_name" value="$(arg robot_name)"/>
+    <param name="num_dodgeballs" value="$(arg num_dodgeballs)"/>
   </node>
+
   <!-- Custom Teleop Node - keyboard -->
   <!-- <node type="training_controller.py" name="training_controller"
     pkg="ml_comprobo" output="screen"/> -->

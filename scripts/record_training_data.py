@@ -28,11 +28,11 @@ class DataRecorder():
 
         # ROS Parameters ------------------------------------------------------
         # Name of the dodgeballs - used to extract model states from gazebo
-        self.dodgeball_prefix = rospy.get_param('dodgeball_prefix', 'ball')
+        self.dodgeball_prefix = rospy.get_param('~dodgeball_prefix', 'ball')
         # Name of the robot model - used to extract model state from gazebo
-        self.robot_name = rospy.get_param('robot_name', 'mobile_base')
+        self.robot_name = rospy.get_param('~robot_name', 'mobile_base')
         # Number of closest dodgeballs to keep track of
-        self.num_dodgeballs = rospy.get_param('num_dodgeballs', 5)
+        self.num_dodgeballs = rospy.get_param('~num_dodgeballs', 5)
         # Save file location
         if rospy.has_param('~save_filename'):
             self.save_filename = rospy.get_param('~save_filename')
