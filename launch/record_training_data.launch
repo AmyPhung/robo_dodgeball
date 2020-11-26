@@ -25,9 +25,14 @@
     <param name="l_vel_min" value="3"/>
     <param name="l_vel_max" value="5"/>
   </node>
-  <!-- Custom Teleop Node -->
-  <node type="training_controller.py" name="training_controller"
+  <!-- Custom Teleop Node - keyboard -->
+  <!-- <node type="training_controller.py" name="training_controller"
+    pkg="ml_comprobo" output="screen"/> -->
+
+  <!-- Custom Teleop Node - controller -->
+  <node type="joystick_controller.py" name="joystick_controller"
     pkg="ml_comprobo" output="screen"/>
+
 
   <!-- RVIZ Node -->
   <!-- <node type="rviz" name="rviz" pkg="rviz"
