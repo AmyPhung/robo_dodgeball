@@ -22,8 +22,8 @@ def split_sequences(sequences, n_steps):
 
 dataset_loc = os.path.expanduser("~/catkin_ws/src/ml_comprobofinal/datasets/")
 model_loc = os.path.expanduser("~/catkin_ws/src/ml_comprobofinal/ml_models/")
-dataset_name = "straight1-1.npy"
-n_steps = 5
+dataset_name = "target_neato.npy"
+n_steps = 2
 
 if __name__ == "__main__":
     raw_data = np.load(dataset_loc + dataset_name)
@@ -46,7 +46,7 @@ if __name__ == "__main__":
     Train the model!
     """
     # fit model
-    model.fit(input, output, epochs=200, verbose=1)
+    model.fit(input, output, epochs=1500, verbose=1)
 
     export_path_sm = model_loc + dataset_name.split('.')[0]
     print("Saving to: ", export_path_sm)
