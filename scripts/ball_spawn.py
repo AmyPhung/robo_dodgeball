@@ -62,7 +62,7 @@ class ball_spawn(object):
         self.ball_num = 0
         self.ball_names = []  # List to keep track of which balls are in frame
         if rospy.has_param('~ball_model_file'):
-            self.dodgeball = rospy.get_param('~ball_model_file')
+            self.dodgeball = open(os.path.expanduser(rospy.get_param('~ball_model_file')), 'r').read()
         else:
             self.dodgeball = open(os.path.expanduser('~/catkin_ws/src/ml_comprobofinal/model/dodgeball/model.sdf'), 'r').read()
         self.running = False
