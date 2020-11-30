@@ -54,7 +54,7 @@ class DataRecorder():
         self.done = False
         self.spawn = False
 
-        if self.run_model:
+        if self.run_model: # Use for machine-learning-based controller
             self.model_path = rospy.get_param('~model_path', "LTSM_straight")
             if self.model_path is not None:
                 from tensorflow import keras
@@ -63,7 +63,7 @@ class DataRecorder():
                 self.model = keras.models.load_model(
                     os.path.expanduser("~/catkin_ws/src/ml_comprobofinal/ml_models/" + self.model_path))
                 self.model.summary()
-        else:
+        else: # Use human controller
             self.twist_sub = rospy.Subscriber("/cmd_vel", Twist, self.twistCB)
 
 
