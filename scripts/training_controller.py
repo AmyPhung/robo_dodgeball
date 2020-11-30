@@ -63,6 +63,9 @@ moveBindings = {
         'M':(-1,1,0,0),
         't':(0,0,1,0),
         'b':(0,0,-1,0),
+        'a':(-1,0,0,0),
+        'd':(1,0,0,0),
+        '/':(0,0,0,0),
     }
 
 speedBindings = {
@@ -95,6 +98,7 @@ class PublishThread(threading.Thread):
         self.spawn = False # Goes true when sending a spawn message
         self.spawning = False # State of spawning so it can flip back and forth
         self.done = False
+        self.nokey = True
 
         # Set timeout to None if rate is 0 (causes new_message to wait forever
         # for new data to publish)
@@ -196,7 +200,7 @@ if __name__=="__main__":
 
     rospy.init_node('teleop_twist_keyboard')
 
-    speed = rospy.get_param("~speed", 0.5)
+    speed = rospy.get_param("~speed", 0.75)
     turn = rospy.get_param("~turn", 1.0)
     repeat = rospy.get_param("~repeat_rate", 0.0)
     key_timeout = rospy.get_param("~key_timeout", 0.0)
@@ -219,6 +223,7 @@ if __name__=="__main__":
         print(vels(speed,turn))
         while(1):
             key = getKey(key_timeout)
+
             if key in moveBindings.keys():
                 x = moveBindings[key][0]
                 y = moveBindings[key][1]
@@ -228,7 +233,7 @@ if __name__=="__main__":
                 speed = speed * speedBindings[key][0]
                 turn = turn * speedBindings[key][1]
 
-                print(vels(speed,turn))
+                print(vels(speed, turn))
                 if (status == 14):
                     print(msg)
                 status = (status + 1) % 15
@@ -249,7 +254,6 @@ if __name__=="__main__":
                 th = 0
                 if (key == '\x03'):
                     break
-
             pub_thread.update(x, y, z, th, speed, turn)
 
     except Exception as e:

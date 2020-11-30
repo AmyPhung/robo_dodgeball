@@ -103,7 +103,6 @@ class ball_spawn(object):
             y_tar = 0
         elif self.targeting == "neato":
             neato_pose = self.get_model("mobile_base", "world").pose
-            print(neato_pose)
             x_tar = neato_pose.position.x
             y_tar = 0
         elif self.targeting == "center":
