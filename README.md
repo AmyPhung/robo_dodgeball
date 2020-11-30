@@ -7,7 +7,7 @@ Project Website: https://everardog.github.io/ml_comprobofinal/
 + Tensorflow `pip install tensorflow`
 
 # Usage
-+ `roslaunch ml_comprobo record_training_data`
++ To record dataset: `roslaunch ml_comprobo record_training_data`
     + Args:
        + `dodgeball_prefix` default: "ball"
        + `robot_name` default: "mobile_base"
@@ -21,6 +21,11 @@ Project Website: https://everardog.github.io/ml_comprobofinal/
        + press s to start recording and start ball spawner
        + press spacebar to stop and save dataset
        + press i or . to drive forwards/backwards
++ To train dataset: TODO
++ To test dataset in gazebo: `roslaunch ml_comprobo run_model.launch`
+   + Make sure the model arg is set correctly in the launch file
 
 # TODO:
 + make velocity relative to robot coords
++ split training and data recorder
++ Add param to auto-start ball spawn

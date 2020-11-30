@@ -13,8 +13,6 @@
     <param name="robot_name" value="$(arg robot_name)"/>
     <param name="num_dodgeballs" value="$(arg num_dodgeballs)"/>
     <param name="run_model" value="0"/>
-    <!--<param name="model_path" value="LTSM_straight"/>
-    <param name="model_type" value="tf"/>-->
   </node>
 
   <!-- Start up ball spawner -->
@@ -24,7 +22,7 @@
     <arg name="num_dodgeballs" value="$(arg num_dodgeballs)"/>
   </include>
 
-  <!-- Start up ball spawner -->
+  <!-- Start up controller -->
   <include file="$(find ml_comprobo)/launch/controller_bringup.launch" >
     <arg name="use_joystick" value="$(arg use_joystick)"/>
   </include>

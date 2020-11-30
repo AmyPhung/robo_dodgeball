@@ -62,8 +62,7 @@ class DataRecorder():
                 from tensorflow import keras
                 self.model_inputs = None
                 self.model_output = None
-                self.model = keras.models.load_model(
-                    os.path.expanduser("~/catkin_ws/src/ml_comprobofinal/ml_models/" + self.model_path))
+                self.model = keras.models.load_model(self.model_path)
                 self.model.summary()
         else: # Use human controller
             self.twist_sub = rospy.Subscriber("/cmd_vel", Twist, self.twistCB)

@@ -1,1 +1,31 @@
-<!-- TODO -->
+<!-- Records dataset for training -->
+
+<launch>
+  <arg name="dodgeball_prefix" default="ball"/>
+  <arg name="robot_name" default="mobile_base"/>
+  <arg name="num_dodgeballs" default="2"/>
+  <arg name="use_joystick" default="true"/> <!-- If false, will use keyboard -->
+
+  <node type="record_training_data.py" name="record_training_data"
+    pkg="ml_comprobo" output="screen">
+    <param name="save_filename" value="$(find ml_comprobo)/datasets/test.npy"/>
+    <param name="dodgeball_prefix" value="$(arg dodgeball_prefix)"/>
+    <param name="robot_name" value="$(arg robot_name)"/>
+    <param name="num_dodgeballs" value="$(arg num_dodgeballs)"/>
+    <param name="run_model" value="1"/>
+    <param name="model_path" value="$(find ml_comprobo)/ml_models/LTSM_straight"/>
+    <param name="model_type" value="tf"/>
+  </node>
+
+  <!-- Start up ball spawner -->
+  <include file="$(find ml_comprobo)/launch/ball_spawn.launch" >
+    <arg name="dodgeball_prefix" value="$(arg dodgeball_prefix)"/>
+    <arg name="robot_name" value="$(arg robot_name)"/>
+    <arg name="num_dodgeballs" value="$(arg num_dodgeballs)"/>
+  </include>
+
+  <!-- Start up controller -->
+  <include file="$(find ml_comprobo)/launch/controller_bringup.launch" >
+    <arg name="use_joystick" value="$(arg use_joystick)"/>
+  </include>
+</launch>
