@@ -5,6 +5,7 @@ Project Website: https://everardog.github.io/ml_comprobofinal/
 # Dependencies:
 + inputs (for joystick controller) `pip install inputs`
 + Tensorflow `pip install tensorflow`
+    + If you get an error message about cuda when importing, run this: `sudo apt install nvidia-cuda-toolkit`
 
 # Usage
 + To record dataset: `roslaunch ml_comprobo record_training_data`
