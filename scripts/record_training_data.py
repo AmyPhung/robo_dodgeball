@@ -19,10 +19,12 @@ class DataRecorder():
         # Publishers and Subscribers ------------------------------------------
         self.model_state_sub = rospy.Subscriber("/gazebo/model_states",
             ModelStates, self.modelStateCB)
-        self.run_sub = rospy.Subscriber("spawn_cmd", Bool, self.process_run_sub)  # Spawnin will start or stop when this is recieved
-        self.pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
+        self.spawn_sub = rospy.Subscriber("spawn_cmd",
+            Bool, self.spawnCB)  # Spawning will start or stop when this is recieved
         self.save_sub = rospy.Subscriber("save_cmd",
             Bool, self.saveCB) # Data collection will end when True is published
+
+        self.pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
 
         # ROS messages --------------------------------------------------------
         self.model_state_msg = ModelStates()
@@ -67,8 +69,9 @@ class DataRecorder():
             self.twist_sub = rospy.Subscriber("/cmd_vel", Twist, self.twistCB)
 
 
-    def process_run_sub(self, msg):
-        # Change the running flag!
+    def spawnCB(self, msg):
+        """ Update the spawn running flag. Does not handle any computation
+        to ensure the most recent messages are used """
         self.spawn = msg.data
 
     def modelStateCB(self, msg):
@@ -98,7 +101,10 @@ class DataRecorder():
         return dist
 
     def _computeModelVecs(self, robot_idx, ball_idx):
-        """Position of ball and velocity of ball"""
+        """ Extract the position of ball (relative to robot)
+        and velocity of ball (relative to world) and return
+        as a numpy array """
+        # TODO: Record velocity relative to robot instead of world
         r_pos = self.model_state_msg.pose[robot_idx].position
         b_pos = self.model_state_msg.pose[ball_idx].position
         b_vel = self.model_state_msg.twist[ball_idx].linear
@@ -108,59 +114,15 @@ class DataRecorder():
         vec_to_robot = r_pos_vec - b_pos_vec  # This is what we care about!
         b_vel_vec = np.array([b_vel.x, b_vel.y])
 
-        # Compute the angle between the ball trajectory and direction to robot
-        #return np.flatten(vec_to_robot, b_vel_vec)
-
         vec_r_x =  r_pos.x - b_pos.x
         vec_r_y = r_pos.y - b_pos.y
         return np.array([vec_r_x, vec_r_y, b_vel.x, b_vel.y])
 
     def _computeRobotVecs(self, robot_idx):
+        """ Extracts the global position of the robot """
         r_pos = self.model_state_msg.pose[robot_idx].position
         r_pos_vec = [r_pos.x, r_pos.y]
         return r_pos_vec
-
-    def _computeModelAngle(self, robot_idx, ball_idx):
-        """ Computes angle between current ball trajectory (assuming linear)
-        and position of the robot. 0 means the ball is headed directly
-        towards the robot, -180 or 180 means the ball is headed
-        directly away from the robot. Currently only handles 2d case """
-        # Assumes these are all in world coords
-        r_pos = self.model_state_msg.pose[robot_idx].position
-        b_pos = self.model_state_msg.pose[ball_idx].position
-        b_vel = self.model_state_msg.twist[ball_idx].linear
-
-        r_pos_vec = np.array([r_pos.x, r_pos.y])
-        b_pos_vec = np.array([b_pos.x, b_pos.y])
-        b_vel_vec = np.array([b_vel.x, b_vel.y])
-
-        # Compute the angle between the ball trajectory and direction to robot
-        vec_to_robot = r_pos_vec - b_pos_vec
-        vec_to_robot, b_vel_vec
-
-        # If ball isn't moving, return pi
-        if (b_vel_vec[0]==0 and b_vel_vec[1]==0):
-            return np.pi
-
-        unit_vec_to_robot = vec_to_robot / np.linalg.norm(vec_to_robot)
-        unit_b_vel_vec = b_vel_vec / np.linalg.norm(b_vel_vec)
-        dot_product = np.dot(unit_vec_to_robot, unit_b_vel_vec)
-        angle = np.arccos(dot_product)
-
-        # Append sign to calculation
-        cross_product = np.cross(vec_to_robot, b_vel_vec)
-        if (cross_product < 0):
-            angle = -angle
-
-        return angle
-
-    def _computeModelVelocity(self, ball_idx):
-        """ Computes magnitude of the velocity """
-        b_vel = self.model_state_msg.twist[ball_idx].linear
-        b_vel_vec = np.array([b_vel.x, b_vel.y, b_vel.z])
-        vel_magnitude = np.linalg.norm(b_vel_vec)
-
-        return vel_magnitude
 
     def recordDataPoint(self):
         """ Get n closest dodgeballs, save to dataset.
@@ -168,12 +130,9 @@ class DataRecorder():
         Recorded Data:
             - human velocity command (magnitude only - assumes 1D case.
             Negative values for backwards, positive for forwards)
-            - magnitude of distance to neato (for each dodgeball - defaults to
-            1000 if ball is not there)
-            - angle of ball movement (0 means the ball is headed directly
-             towards the neato, -180 or 180 means the ball is headed
-             directly away from the neato) (defaults to 180 if ball is not there)
-            - magnitude of velocity
+            - data for the nearest n balls, including:
+                > x,y position of balls relative to robot
+                > vx,vy velocity of balls relative to global coords
         """
         vel_cmd = self.twist_msg.linear.x
 
@@ -184,25 +143,22 @@ class DataRecorder():
         except ValueError:
             return
 
-        # Temporarily store all ball distances, angles, and velocities - will filter later
-        dists, angles, vels = [], [], []
+        # Temporarily store all ball data - will filter these later using
+        # the distances
+        balls, dists = [], []
 
-        balls = []
         # Parse gazebo model message
         for b_idx, m_name in enumerate(self.model_state_msg.name):
             # Check to make sure we're looking at a ball
             if self._containsPrefix(self.dodgeball_prefix, m_name):
                 dist = self._computeModelDistance(m_idx, b_idx)
                 dists.append(dist)
-                # angle = self._computeModelAngle(m_idx, b_idx)
-                # angles.append(angle)
-                vel = self._computeModelVelocity(b_idx)
-                vels.append(vel)
 
-                # nathan's tests
+                # Record ball data in vector form
                 ball_vecs = self._computeModelVecs(m_idx, b_idx)
                 balls.append(ball_vecs)
         robot_pos = self._computeRobotVecs(m_idx)
+
         # If we don't have enough dodgeballs, add in a few "dummy" values
         # These dummy values are equivalent to a dodgeball that would be
         # sufficiently far away headed in the wrong direction
@@ -210,8 +166,6 @@ class DataRecorder():
         # an empty list
         missing_balls = self.num_dodgeballs - len(dists)
         dists += missing_balls*[1000] # Add dummy balls 1000 meters away
-        # angles += missing_balls*[np.pi] # Add dummy balls moving away from robot
-        # vels += missing_balls*[0] # Add dummy balls with 0 velocity
 
         # Add dummy balls in
         dummy_ball = [[0,100,0,0]]
@@ -219,18 +173,16 @@ class DataRecorder():
 
         # Get indices of n closest balls
         nearest_idxs = np.argpartition(dists, -self.num_dodgeballs)[:self.num_dodgeballs]
-        # Get distances and angles of n closest balls
-        # n_dists = list(itemgetter(*nearest_idxs)(dists))
-        # n_angles = list(itemgetter(*nearest_idxs)(angles))
-        # n_vels = list(itemgetter(*nearest_idxs)(vels))
 
+        # Get info of n closest balls
         n_balls = list(itemgetter(*nearest_idxs)(balls))
         n_balls = list(itertools.chain(*n_balls))
+
         # Record data point
-        new_pt = [vel_cmd] + n_balls + robot_pos # n_dists + n_angles + n_vels + n_robot_pos + n_ball_pos + n_ball_vel
+        new_pt = [vel_cmd] + n_balls + robot_pos
         self.output_data.append(new_pt)
 
-    def prepare_data(self, model_depth=5):
+    def prepareData(self, model_depth=5):
         if len(self.output_data) < model_depth:
             self.model_inputs = None
         else:
@@ -268,7 +220,7 @@ class DataRecorder():
                 # Send the model inputs if testing the model
                 if self.run_model:
                     # Prepare model inputs
-                    self.prepare_data()
+                    self.prepareData()
                     if self.model_inputs is None:
                         continue
                     # Run the inputs through the model
