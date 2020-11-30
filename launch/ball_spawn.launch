@@ -1,0 +1,31 @@
+<!-- Starts up ball spawner node -->
+
+<launch>
+  <arg name="dodgeball_prefix" default="ball"/>
+  <arg name="robot_name" default="mobile_base"/>
+  <arg name="num_dodgeballs" default="2"/>
+
+  <node type="ball_spawn.py" name="ball_spawn"
+    pkg="ml_comprobo" output="screen">
+    <!--Specifies trajectory of balls (center, straight, neato, random)-->
+    <param name="targeting" value="neato"/>
+
+    <!--SPAWNING BOX FOR THE BALLS-->
+    <param name="spawn_x_min" value="-1.5"/>
+    <param name="spawn_x_max" value="1.5"/>
+    <param name="spawn_y_min" value="5"/>
+    <param name="spawn_y_max" value="5"/>
+    <!--VELOCITY RANGE FOR BALLS-->
+    <param name="a_vel_min" value="0"/>
+    <param name="a_vel_max" value="0"/>
+    <param name="l_vel_min" value="3"/>
+    <param name="l_vel_max" value="5"/>
+
+    <param name="ball_model_file"
+      value="$(find ml_comprobo)/model/dodgeball/model.sdf"/>
+
+    <param name="dodgeball_prefix" value="$(arg dodgeball_prefix)"/>
+    <param name="robot_name" value="$(arg robot_name)"/>
+    <param name="num_dodgeballs" value="$(arg num_dodgeballs)"/>
+  </node>
+</launch>

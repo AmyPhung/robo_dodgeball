@@ -1,0 +1,17 @@
+<!-- Starts up controller node -->
+
+<launch>
+  <arg name="use_joystick" default="true"/> <!-- If false, will use keyboard -->
+
+  <group if="$(arg use_joystick)">
+    <!-- Custom Teleop Node - controller -->
+    <node type="joystick_controller.py" name="joystick_controller"
+      pkg="ml_comprobo" output="screen"/>
+  </group>
+
+  <group unless="$(arg use_joystick)">
+    <!-- Custom Teleop Node - keyboard -->
+    <node type="training_controller.py" name="training_controller"
+      pkg="ml_comprobo" output="screen"/>
+  </group>
+</launch>
