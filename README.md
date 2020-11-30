@@ -21,7 +21,8 @@ Project Website: https://everardog.github.io/ml_comprobofinal/
        + press s to start recording and start ball spawner
        + press spacebar to stop and save dataset
        + press i or . to drive forwards/backwards
-+ To train dataset: TODO
++ To train dataset: `python3 train_LTSM.py`
+   + Double-check the file to ensure paths are set correctly
 + To test dataset in gazebo: `roslaunch ml_comprobo run_model.launch`
    + Make sure the model arg is set correctly in the launch file
 
