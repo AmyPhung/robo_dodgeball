@@ -57,7 +57,7 @@ class DataRecorder():
         self.spawn = False
 
         if self.run_model: # Use for machine-learning-based controller
-            self.model_path = rospy.get_param('~model_path', "LTSM_straight")
+            self.model_path = rospy.get_param('~model_path', "LSTM_05_002")
             if self.model_path is not None:
                 from tensorflow import keras
                 self.model_inputs = None

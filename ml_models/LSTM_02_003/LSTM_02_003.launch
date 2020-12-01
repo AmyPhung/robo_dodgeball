@@ -1,17 +1,21 @@
 <launch>
   <!-- Dataset Recorder Node -->
+  <arg name="dodgeball_prefix" default="ball"/>
+  <arg name="robot_name" default="mobile_base"/>
+  <arg name="num_dodgeballs" default="2"/>
+  <arg name="use_joystick" default="false"/> <!-- If false, will use keyboard -->
 
-    <param name="dodgeball_prefix" value="ball"/>
-    <param name="robot_name" value="mobile_base"/>
-    <param name="num_dodgeballs" value="2"/>
-
-  <node type="record_training_data.py" name="record_training_data"
+  <node type="process_gazebo.py" name="record_training_data"
     pkg="ml_comprobo" output="screen">
-    <param name="~save_filename" value="$(find ml_comprobo)/datasets/test.npy"/>
-    <param name="~run_model" value="1"/>
-    <param name="~model_path" value="target_neato"/><!--Uses 5 time steps-->
-    <!--<param name="~model_type" value="tf"/>-->
+    <param name="save_filename" value="$(find ml_comprobo)/datasets/test.npy"/>
+    <param name="dodgeball_prefix" value="$(arg dodgeball_prefix)"/>
+    <param name="robot_name" value="$(arg robot_name)"/>
+    <param name="num_dodgeballs" value="$(arg num_dodgeballs)"/>
+    <param name="run_model" value="1"/>
+    <param name="model_path" value="$(find ml_comprobo)/ml_models/LSTM_02_003"/>
+    <param name="model_type" value="tf"/>
   </node>
+
   <node type="ball_spawn.py" name="ball_spawn"
     pkg="ml_comprobo" output="screen">
     <!--Specifies trajectory of balls (center, straight, neato, random)-->
