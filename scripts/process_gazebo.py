@@ -5,9 +5,11 @@ import rospy
 from gazebo_msgs.msg import ModelStates
 from geometry_msgs.msg import Twist, Vector3
 from std_msgs.msg import Bool
+from tf.transformations import quaternion_matrix
 
 # Python Imports
 import numpy as np
+from numpy.linalg import inv # Matrix inverse function
 import itertools
 import os
 from operator import itemgetter
@@ -101,21 +103,38 @@ class DataRecorder():
 
     def _computeModelVecs(self, robot_idx, ball_idx):
         """ Extract the position of ball (relative to robot)
-        and velocity of ball (relative to world) and return
+        and velocity of ball (relative to robot) and return
         as a numpy array """
-        # TODO: Record velocity relative to robot instead of world
-        r_pos = self.model_state_msg.pose[robot_idx].position
-        b_pos = self.model_state_msg.pose[ball_idx].position
-        b_vel = self.model_state_msg.twist[ball_idx].linear
+        r_pos_world = self.model_state_msg.pose[robot_idx].position
+        r_quat_world = self.model_state_msg.pose[robot_idx].orientation
+        b_pos_world = self.model_state_msg.pose[ball_idx].position
+        b_vel_world = self.model_state_msg.twist[ball_idx].linear
 
-        r_pos_vec = np.array([r_pos.x, r_pos.y])
-        b_pos_vec = np.array([b_pos.x, b_pos.y])
-        vec_to_robot = r_pos_vec - b_pos_vec  # This is what we care about!
-        b_vel_vec = np.array([b_vel.x, b_vel.y])
+        # Input order: x,y,z,w
+        rot_matrix = quaternion_matrix([r_quat_world.x,
+                                        r_quat_world.y,
+                                        r_quat_world.z,
+                                        r_quat_world.w])
 
-        vec_r_x =  r_pos.x - b_pos.x
-        vec_r_y = r_pos.y - b_pos.y
-        return np.array([vec_r_x, vec_r_y, b_vel.x, b_vel.y])
+        translation_matrix = [[1, 0, 0, r_pos_world.x],
+                              [0, 1, 0, r_pos_world.y],
+                              [0, 0, 1, r_pos_world.z],
+                              [0, 0, 0, 1            ]]
+
+        # Rewrite ball position and velocity as a vector
+        b_pos_vector = [b_pos_world.x, b_pos_world.y, b_pos_world.z, 1]
+        b_vel_vector = [b_vel_world.x, b_vel_world.y, b_vel_world.z, 1]
+
+        # Matrix multiplication order for composite transform:
+        # SRT (scale, rotate, translate)
+        T = np.matmul(inv(rot_matrix), inv(translation_matrix))
+
+        # Compute ball position and velocity in robot coords
+        b_pos_robot = np.matmul(T, b_pos_vector)
+        b_vel_robot = np.matmul(T, b_vel_vector)
+
+        return np.array([b_pos_robot[0], b_pos_robot[1],
+                         b_vel_robot[0], b_vel_robot[1]])
 
     def _computeRobotVecs(self, robot_idx):
         """ Extracts the global position of the robot """
