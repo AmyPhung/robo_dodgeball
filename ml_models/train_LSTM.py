@@ -23,13 +23,26 @@ def split_sequences(sequences, n_steps):
 
 dataset_loc = os.path.expanduser("~/catkin_ws/src/ml_comprobofinal/datasets/")
 model_loc = os.path.expanduser("~/catkin_ws/src/ml_comprobofinal/ml_models/")
-dataset_name = "LSTM_05_20_002.npy"
-n_steps = 5
+dataset_names = ["002_2ball_straight_1x5_vector_keyboard_nathan.npy"]
+n_steps = 2
+hidden = 10
 
 if __name__ == "__main__":
-    raw_data = np.load(dataset_loc + dataset_name)
-    input, output = split_sequences(raw_data, n_steps)
-    n_features = input.shape[2]
+    input = None
+    output = None
+    print("_{:02d}".format(n_steps))
+    save_name = "_{:02d}_{:03d}".format(n_steps, hidden)
+    for dataset in dataset_names:
+        save_name += "_"+dataset.split("_")[0]
+        raw_data = np.load(dataset_loc + dataset)
+        file_input, file_output = split_sequences(raw_data, n_steps)
+        n_features = file_input.shape[2]
+        if input is not None:
+            input = np.concatenate((input, file_input))
+            output = np.concatenate((output, file_output))
+        else:
+            input = file_input
+            output = file_output
 
     print("Model Input Shape: ", input.shape)
     print("Model Output Shape: ", output.shape)
@@ -39,7 +52,7 @@ if __name__ == "__main__":
     MAKE THE MODEL!!
     """
     model = Sequential()
-    model.add(LSTM(20, activation='relu', input_shape=(n_steps, n_features)))
+    model.add(LSTM(hidden, activation='relu', input_shape=(n_steps, n_features)))
     model.add(Dense(1))
     model.compile(optimizer='adam', loss='mse', metrics=['accuracy'])
 
@@ -48,17 +61,17 @@ if __name__ == "__main__":
     """
     # fit model
     #model.fit(input, output, epochs=1000, verbose=1)
-    history = model.fit(input, output, epochs=50, validation_split=0.2)
+    history = model.fit(input, output, epochs=100, validation_split=0.2)
     # plot train and validation loss
-    pyplot.plot(history.history['loss'][1:])
-    pyplot.plot(history.history['val_loss'][1:])
-    pyplot.title('model train vs validation loss')
+    pyplot.plot(history.history['loss'][2:])
+    pyplot.plot(history.history['val_loss'][2:])
+    pyplot.title('model train vs validation loss using nsteps:{} hidden: {}'.format(n_steps, hidden))
     pyplot.ylabel('loss')
     pyplot.xlabel('epoch')
     pyplot.legend(['train', 'validation'], loc='upper right')
     pyplot.show()
 
-    export_path_sm = model_loc + dataset_name.split('.')[0]
+    export_path_sm = model_loc + "LSTM" + save_name
     print("Saving to: ", export_path_sm)
     tf.saved_model.save(model, export_path_sm)
 
