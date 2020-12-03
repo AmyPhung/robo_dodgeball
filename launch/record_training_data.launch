@@ -6,7 +6,7 @@
   <arg name="num_dodgeballs" default="2"/>
   <arg name="use_joystick" default="true"/> <!-- If false, will use keyboard -->
 
-  <node type="record_training_data.py" name="record_training_data"
+  <node type="process_gazebo.py" name="process_gazebo"
     pkg="ml_comprobo" output="screen">
     <param name="save_filename" value="$(find ml_comprobo)/datasets/test.npy"/>
     <param name="dodgeball_prefix" value="$(arg dodgeball_prefix)"/>
