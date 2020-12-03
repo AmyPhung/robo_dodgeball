@@ -2,7 +2,9 @@
 """
 Joystick Teleop
 Uses a usb joystick for teleoperation. Publishes twist command to /cmd_vel
-topic (currently only 1D). Click A to start spawner and B to stop data recording
+topic (currently only 1D). Click A to start spawner and data recording and
+B to stop data recording
+
 Designed for and tested on an Xbox 360 controller
 
 ROS Parameters:

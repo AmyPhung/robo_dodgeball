@@ -1,5 +1,22 @@
 #!/usr/bin/env python3
+"""
+Process Gazebo
+Handles all gazebo communications. Has 2 primary modes: a data-collecting mode,
+and a model testing mode. In data collection mode, this node records position
+and velocity data for the top n balls (in robot coordinate frame), and the
+x component of the human velocity command. In model testing mode, it doesn't
+listen to human velocity commands, and instead sends its own commands based
+on the trained machine-learning model
 
+ROS Parameters:
+- dodgeball_prefix: name of dodgeballs in gazebo
+- robot_name: name of robot in gazebo
+- num_dodgeballs: number of dodgeballs to record in dataset
+- run_model: 0 for data collection mode, 1 for model testing mode
+- save_filename: Location to save recorded data to
+- rate: Rate in Hz for node to run at
+- model_path: Machine learning model path
+"""
 # ROS Imports
 import rospy
 from gazebo_msgs.msg import ModelStates
@@ -14,9 +31,9 @@ import itertools
 import os
 from operator import itemgetter
 
-class DataRecorder():
+class ProcessGazebo():
     def __init__(self):
-        rospy.init_node("data_recorder")
+        rospy.init_node("process_gazebo")
 
         # Publishers and Subscribers ------------------------------------------
         self.model_state_sub = rospy.Subscriber("/gazebo/model_states",
@@ -25,8 +42,6 @@ class DataRecorder():
             Bool, self.spawnCB)  # Spawning will start or stop when this is recieved
         self.save_sub = rospy.Subscriber("save_cmd",
             Bool, self.saveCB) # Data collection will end when True is published
-
-        self.pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
 
         # ROS messages --------------------------------------------------------
         self.model_state_msg = ModelStates()
@@ -60,6 +75,8 @@ class DataRecorder():
 
         if self.run_model: # Use for machine-learning-based controller
             self.model_path = rospy.get_param('~model_path', "LSTM_05_002")
+            self.twist_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
+
             if self.model_path is not None:
                 from tensorflow import keras
                 self.model_inputs = None
@@ -245,9 +262,9 @@ class DataRecorder():
                     self.model_inputs = self.model_inputs.reshape(
                         (1, self.model_inputs.shape[0], self.model_inputs.shape[1]))
                     self.model_output = self.model.predict(np.array(self.model_inputs))
-                    self.pub.publish(Twist(linear=Vector3(x=self.model_output)))
+                    self.twist_pub.publish(Twist(linear=Vector3(x=self.model_output)))
             self.update_rate.sleep()
 
 if __name__ == "__main__":
-    data_recorder = DataRecorder()
-    data_recorder.run()
+    process_gazebo = ProcessGazebo()
+    process_gazebo.run()
