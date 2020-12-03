@@ -1,20 +1,39 @@
 #!/usr/bin/env python3
+"""
+Process Gazebo
+Handles all gazebo communications. Has 2 primary modes: a data-collecting mode,
+and a model testing mode. In data collection mode, this node records position
+and velocity data for the top n balls (in robot coordinate frame), and the
+x component of the human velocity command. In model testing mode, it doesn't
+listen to human velocity commands, and instead sends its own commands based
+on the trained machine-learning model
 
+ROS Parameters:
+- dodgeball_prefix: name of dodgeballs in gazebo
+- robot_name: name of robot in gazebo
+- num_dodgeballs: number of dodgeballs to record in dataset
+- run_model: 0 for data collection mode, 1 for model testing mode
+- save_filename: Location to save recorded data to
+- rate: Rate in Hz for node to run at
+- model_path: Machine learning model path
+"""
 # ROS Imports
 import rospy
 from gazebo_msgs.msg import ModelStates
 from geometry_msgs.msg import Twist, Vector3
 from std_msgs.msg import Bool
+from tf.transformations import quaternion_matrix
 
 # Python Imports
 import numpy as np
+from numpy.linalg import inv # Matrix inverse function
 import itertools
 import os
 from operator import itemgetter
 
-class DataRecorder():
+class ProcessGazebo():
     def __init__(self):
-        rospy.init_node("data_recorder")
+        rospy.init_node("process_gazebo")
 
         # Publishers and Subscribers ------------------------------------------
         self.model_state_sub = rospy.Subscriber("/gazebo/model_states",
@@ -23,8 +42,6 @@ class DataRecorder():
             Bool, self.spawnCB)  # Spawning will start or stop when this is recieved
         self.save_sub = rospy.Subscriber("save_cmd",
             Bool, self.saveCB) # Data collection will end when True is published
-
-        self.pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
 
         # ROS messages --------------------------------------------------------
         self.model_state_msg = ModelStates()
@@ -58,6 +75,8 @@ class DataRecorder():
 
         if self.run_model: # Use for machine-learning-based controller
             self.model_path = rospy.get_param('~model_path', "LSTM_05_002")
+            self.twist_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
+
             if self.model_path is not None:
                 from tensorflow import keras
                 self.model_inputs = None
@@ -101,21 +120,38 @@ class DataRecorder():
 
     def _computeModelVecs(self, robot_idx, ball_idx):
         """ Extract the position of ball (relative to robot)
-        and velocity of ball (relative to world) and return
+        and velocity of ball (relative to robot) and return
         as a numpy array """
-        # TODO: Record velocity relative to robot instead of world
-        r_pos = self.model_state_msg.pose[robot_idx].position
-        b_pos = self.model_state_msg.pose[ball_idx].position
-        b_vel = self.model_state_msg.twist[ball_idx].linear
+        r_pos_world = self.model_state_msg.pose[robot_idx].position
+        r_quat_world = self.model_state_msg.pose[robot_idx].orientation
+        b_pos_world = self.model_state_msg.pose[ball_idx].position
+        b_vel_world = self.model_state_msg.twist[ball_idx].linear
 
-        r_pos_vec = np.array([r_pos.x, r_pos.y])
-        b_pos_vec = np.array([b_pos.x, b_pos.y])
-        vec_to_robot = r_pos_vec - b_pos_vec  # This is what we care about!
-        b_vel_vec = np.array([b_vel.x, b_vel.y])
+        # Input order: x,y,z,w
+        rot_matrix = quaternion_matrix([r_quat_world.x,
+                                        r_quat_world.y,
+                                        r_quat_world.z,
+                                        r_quat_world.w])
 
-        vec_r_x =  r_pos.x - b_pos.x
-        vec_r_y = r_pos.y - b_pos.y
-        return np.array([vec_r_x, vec_r_y, b_vel.x, b_vel.y])
+        translation_matrix = [[1, 0, 0, r_pos_world.x],
+                              [0, 1, 0, r_pos_world.y],
+                              [0, 0, 1, r_pos_world.z],
+                              [0, 0, 0, 1            ]]
+
+        # Rewrite ball position and velocity as a vector
+        b_pos_vector = [b_pos_world.x, b_pos_world.y, b_pos_world.z, 1]
+        b_vel_vector = [b_vel_world.x, b_vel_world.y, b_vel_world.z, 1]
+
+        # Matrix multiplication order for composite transform:
+        # SRT (scale, rotate, translate)
+        T = np.matmul(inv(rot_matrix), inv(translation_matrix))
+
+        # Compute ball position and velocity in robot coords
+        b_pos_robot = np.matmul(T, b_pos_vector)
+        b_vel_robot = np.matmul(T, b_vel_vector)
+
+        return np.array([b_pos_robot[0], b_pos_robot[1],
+                         b_vel_robot[0], b_vel_robot[1]])
 
     def _computeRobotVecs(self, robot_idx):
         """ Extracts the global position of the robot """
@@ -226,9 +262,9 @@ class DataRecorder():
                     self.model_inputs = self.model_inputs.reshape(
                         (1, self.model_inputs.shape[0], self.model_inputs.shape[1]))
                     self.model_output = self.model.predict(np.array(self.model_inputs))
-                    self.pub.publish(Twist(linear=Vector3(x=self.model_output)))
+                    self.twist_pub.publish(Twist(linear=Vector3(x=self.model_output)))
             self.update_rate.sleep()
 
 if __name__ == "__main__":
-    data_recorder = DataRecorder()
-    data_recorder.run()
+    process_gazebo = ProcessGazebo()
+    process_gazebo.run()

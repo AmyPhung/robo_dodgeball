@@ -4,7 +4,7 @@ import rospy
 from neato_node.msg import Bump
 from std_msgs.msg import Int8MultiArray, Bool
 from geometry_msgs.msg import Twist, Vector3, Pose, Point, Quaternion
-from gazebo_msgs.srv import DeleteModel, SpawnModel, SetModelState, GetModelState
+from gazebo_msgs.srv import DeleteModel, SpawnModel, SetModelState, GetModelState, GetWorldProperties
 from gazebo_msgs.msg import ModelState
 from visualization_msgs.msg import Marker
 import tty
@@ -21,17 +21,19 @@ settings = termios.tcgetattr(sys.stdin)
 class ball_spawn(object):
     def __init__(self):
         rospy.init_node('ball_spawn')
-        print("Waiting for gazebo services...")
+        rospy.loginfo("Waiting for gazebo services...")
         rospy.wait_for_service("gazebo/spawn_sdf_model")
         rospy.wait_for_service("gazebo/delete_model")
         rospy.wait_for_service("gazebo/set_model_state")
         rospy.wait_for_service("gazebo/get_model_state")
-        print("Services done")
+        rospy.wait_for_service("gazebo/get_world_properties")
+        rospy.loginfo("Services done")
 
         self.delete_model = rospy.ServiceProxy("gazebo/delete_model", DeleteModel)
         self.spawn_model = rospy.ServiceProxy("gazebo/spawn_sdf_model", SpawnModel)
         self.set_model = rospy.ServiceProxy("gazebo/set_model_state", SetModelState)
         self.get_model = rospy.ServiceProxy("gazebo/get_model_state", GetModelState)
+        self.get_world_properties = rospy.ServiceProxy("gazebo/get_world_properties", GetWorldProperties)
 
         self.pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
         self.run_sub = rospy.Subscriber("spawn_cmd", Bool, self.process_run_sub)  # Spawnin will start or stop when this is recieved
@@ -152,7 +154,7 @@ class ball_spawn(object):
             neato_pose = self.get_model(ball, "mobile_base").pose
             #print("World: {} \nNeato: {}".format(world_pose, neato_pose))
 
-            # Delwte ones that are gone
+            # Delete ones that are gone
             if neato_pose.position.y <= 0:
                 self.delete_model(ball)
                 del self.ball_names[num]
@@ -164,11 +166,13 @@ class ball_spawn(object):
             #print("generating more balls!!!")
             self.gen_ball()
 
-    def remove_all_balls(self, num=200):
-        for ball_num in range(num):
-            self.delete_model(self.dodgeball_prefix + str(ball_num))
+    def remove_all_balls(self):
+        world_data = self.get_world_properties()
+        for name in world_data.model_names:
+            if name[:len(self.dodgeball_prefix)] == self.dodgeball_prefix:
+                 self.delete_model(name)
+                 rospy.loginfo("Removed model " + name)
         self.ball_names = []
-
 
     def getKey(self):
         tty.setraw(sys.stdin.fileno())
@@ -180,9 +184,9 @@ class ball_spawn(object):
 
     def run(self):
         r = rospy.Rate(10)
-        print('Cleaning the playpen')
-        self.remove_all_balls(200)
-        print("Time for some dodgeball!")
+        rospy.loginfo('Cleaning the playpen')
+        self.remove_all_balls()
+        rospy.loginfo("Time for some dodgeball!")
 
         while not rospy.is_shutdown() and not self.done:
             r.sleep()
@@ -190,7 +194,7 @@ class ball_spawn(object):
             if self.running:
                 self.manage_balls()
 
-        self.remove_all_balls(num=self.ball_num)
+        self.remove_all_balls()
         self.pub.publish(Twist(linear=Vector3(x=0), angular=Vector3(z=0)))
 
 if __name__ == '__main__':
