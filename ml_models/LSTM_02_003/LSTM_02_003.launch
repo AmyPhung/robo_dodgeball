@@ -21,6 +21,12 @@
     <!--Specifies trajectory of balls (center, straight, neato, random)-->
     <param name="targeting" value="neato"/>
 
+    <param name="ball_model_file"
+      value="$(find ml_comprobo)/model/dodgeball/model.sdf"/>
+    <param name="dodgeball_prefix" value="$(arg dodgeball_prefix)"/>
+    <param name="robot_name" value="$(arg robot_name)"/>
+    <param name="num_dodgeballs" value="$(arg num_dodgeballs)"/>
+
     <!--SPAWNING BOX FOR THE BALLS-->
     <param name="spawn_x_min" value="-1.5"/>
     <param name="spawn_x_max" value="1.5"/>

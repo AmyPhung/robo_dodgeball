@@ -12,24 +12,18 @@
     <param name="robot_name" value="$(arg robot_name)"/>
     <param name="num_dodgeballs" value="$(arg num_dodgeballs)"/>
     <param name="run_model" value="1"/>
-    <param name="model_path" value="$(find ml_comprobo)/ml_models/LSTM_05_001"/>
+    <param name="model_path" value="$(find ml_comprobo)/ml_models/LSTM_05_20_002"/>
     <param name="model_type" value="tf"/>
   </node>
 
   <node type="ball_spawn.py" name="ball_spawn"
     pkg="ml_comprobo" output="screen">
     <!--Specifies trajectory of balls (center, straight, neato, random)-->
-    <param name="targeting" value="random"/>
-
-    <param name="ball_model_file"
-      value="$(find ml_comprobo)/model/dodgeball/model.sdf"/>
-    <param name="dodgeball_prefix" value="$(arg dodgeball_prefix)"/>
-    <param name="robot_name" value="$(arg robot_name)"/>
-    <param name="num_dodgeballs" value="$(arg num_dodgeballs)"/>
+    <param name="targeting" value="straight"/>
 
     <!--SPAWNING BOX FOR THE BALLS-->
-    <param name="spawn_x_min" value="-1.5"/>
-    <param name="spawn_x_max" value="1.5"/>
+    <param name="spawn_x_min" value="-1"/>
+    <param name="spawn_x_max" value="1"/>
     <param name="spawn_y_min" value="5"/>
     <param name="spawn_y_max" value="5"/>
     <!--VELOCITY RANGE FOR BALLS-->
