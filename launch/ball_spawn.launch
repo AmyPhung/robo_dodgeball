@@ -8,7 +8,7 @@
   <node type="ball_spawn.py" name="ball_spawn"
     pkg="ml_comprobo" output="screen">
     <!--Specifies trajectory of balls (center, straight, neato, random)-->
-    <param name="targeting" value="neato"/>
+    <param name="targeting" value="random"/>
 
     <!--SPAWNING BOX FOR THE BALLS-->
     <param name="spawn_x_min" value="-1.5"/>
