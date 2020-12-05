@@ -23,15 +23,15 @@ def split_sequences(sequences, n_steps):
 
 dataset_loc = os.path.expanduser("~/catkin_ws/src/ml_comprobofinal/datasets/")
 model_loc = os.path.expanduser("~/catkin_ws/src/ml_comprobofinal/ml_models/")
-dataset_names = ["002_2ball_straight_1x5_vector_keyboard_nathan.npy"]
-n_steps = 2
-hidden = 10
-
+dataset_names = ["007_2ball_straight_1.5x5_vector_keyboard_nathan.npy", "008_2ball_straight_1.5x5_vector_keyboard_nathan.npy"]#["009_2ball_random_1.5x5_vector_keyboard_nathan.npy", "010_2ball_random_1.5x5_vector_keyboard_nathan.npy", "011_2ball_random_1.5x5_vector_keyboard_nathan.npy", "012_2ball_random_1.5x5_vector_keyboard_nathan.npy"]
+n_steps = 8
+hidden = 15
+epochs = 90
 if __name__ == "__main__":
     input = None
     output = None
     print("_{:02d}".format(n_steps))
-    save_name = "_{:02d}_{:03d}".format(n_steps, hidden)
+    save_name = "_{:02d}-{:03d}".format(n_steps, hidden)
     for dataset in dataset_names:
         save_name += "_"+dataset.split("_")[0]
         raw_data = np.load(dataset_loc + dataset)
@@ -61,7 +61,7 @@ if __name__ == "__main__":
     """
     # fit model
     #model.fit(input, output, epochs=1000, verbose=1)
-    history = model.fit(input, output, epochs=100, validation_split=0.2)
+    history = model.fit(input, output, epochs=epochs, validation_split=0.2)
     # plot train and validation loss
     pyplot.plot(history.history['loss'][2:])
     pyplot.plot(history.history['val_loss'][2:])
