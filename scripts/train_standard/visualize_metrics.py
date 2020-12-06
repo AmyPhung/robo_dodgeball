@@ -3,7 +3,7 @@ Visualizes metrics of a trained nueral network
 """
 
 # Pick which model to visualize metrics for
-model_name = "standard_999"
+model_name = "standard_997"
 
 import pickle                      # Loading in data
 from helpers import get_ws_path    # Make life easier
@@ -24,8 +24,9 @@ metrics_file.close()
 Visualize how the loss changes over the different epochs
 """
 
-if "epochs" in metrics_dict and "loss_list" in metrics_dict:
-    plt.plot(metrics_dict["epochs"], metrics_dict["loss_list"])
+if "epochs" in metrics_dict and "train_loss_list" in metrics_dict and "test_loss_list" in metrics_dict:
+    plt.plot(metrics_dict["epochs"], metrics_dict["train_loss_list"])
+    plt.plot(metrics_dict["epochs"], metrics_dict["test_loss_list"])
     plt.xlabel("Epoch")
     plt.ylabel("Loss")
     plt.title("Loss Over Epochs")

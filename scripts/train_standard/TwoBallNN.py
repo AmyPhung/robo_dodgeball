@@ -2,11 +2,16 @@
 Class definition for neural network
 
 Assumptions about data:
-  We have 6 features () : 3 features per ball for 2 balls
-    Distance from robot
-    Angle of Attack
-    Magnitude of velocity towards robot
-  and 1 output: v_N : velocity of the Neato
+  We have 10 features () :
+    4 features per ball for 2 balls
+        px,py position of ball relative to neato
+        vx,vy velocity of ball relative to neato
+    2 features for robot
+        rx,ry position of robot in global frame
+
+  and 1 output: v_N : x velocity of the Neato
+
+  In vector form: [v_N px1 py1 vx1 vy1 px2 py2 vx2 vy2 rx ry]
   Bias term is also encoded into our net
 """
 
