@@ -95,5 +95,3 @@ if __name__ == "__main__":
     export_path_sm = model_loc + "LSTM" + save_name
     print("Saving to: ", export_path_sm)
     tf.saved_model.save(model, export_path_sm)
-
-

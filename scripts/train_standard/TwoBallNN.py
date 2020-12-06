@@ -24,15 +24,15 @@ class TwoBallNN(nn.Module):
     # Tanh is sigmoid, but centered around 0
     self.activation_func = torch.nn.Tanh()
 
-    # We have 6 features () : 3 features per ball for 2 balls
+    # We have 10 features () : 5 features per ball for 2 balls
     #   Distance from robot
-    #   Angle of Attack
-    #   Magnitude of velocity towards robot
+    #   x,y velocity of ball in robot frame
+    #   x,y position of ball in robot frame
     # and 1 output: v_N : velocity of the Neato
     # Bias term is also encoded into our net
 
     # Now we set up our layers
-    input_size = 6
+    input_size = 10
     fc1_size = 4
     fc2_size = 1
 

@@ -3,7 +3,7 @@ Visualizes metrics of a trained nueral network
 """
 
 # Pick which model to visualize metrics for
-model_name = "standard_993"
+model_name = "standard_999"
 
 import pickle                      # Loading in data
 from helpers import get_ws_path    # Make life easier
