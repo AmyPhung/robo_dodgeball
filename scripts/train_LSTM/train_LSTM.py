@@ -96,5 +96,3 @@ if __name__ == "__main__":
     pyplot.legend(['train', 'validation'], loc='upper right')
     pyplot.savefig((export_path_sm + "/loss.png"))
     pyplot.show()
-
-

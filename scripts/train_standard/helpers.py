@@ -2,7 +2,7 @@ import os
 
 def get_ws_path():
     home_path = os.path.expanduser("~") + "/"
-    if home_path.split("/")[1] == "aphung":
+    if home_path.split("/")[2] == "amy":
         ws_name = "robo_ws"
     else:
         ws_name = "catkin_ws"

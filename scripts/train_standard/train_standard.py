@@ -26,13 +26,13 @@ from helpers import get_ws_path
 
 ws_path = get_ws_path()
 dataset_loc = ws_path + "datasets/"
-dataset_name = "11-21-20_dataset.npy"
+dataset_name = "013_2ball_gaussian_1.5x5_vector_joystick_amy.npy"
 
 raw_data = np.load(dataset_loc + dataset_name)
 
 """ Partition data into training and testing data """
 
-raw_data_t = raw_data.transpose()
+raw_data_t = raw_data# raw_data.transpose()
 
 # Organize data into X and y
 X_data = raw_data_t[:, 1:]

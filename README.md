@@ -3,9 +3,13 @@ This repo holds code for the final course project in Computational Introduction 
 Project Website: https://everardog.github.io/ml_comprobofinal/
 
 # Dependencies:
-+ inputs (for joystick controller) `pip install inputs`
-+ Tensorflow `pip install tensorflow`
++ inputs (for joystick controller) `pip3 install inputs`
++ LSTM model:
+    + Tensorflow `pip3 install tensorflow`
     + If you get an error message about cuda when importing, run this: `sudo apt install nvidia-cuda-toolkit`
++ Standard model:
+    + PyTorch `pip3 install torch`
+    + Sklearn `pip3 install sklearn`
 
 # Usage
 + To record dataset: `roslaunch ml_comprobo record_training_data`

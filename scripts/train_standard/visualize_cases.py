@@ -226,7 +226,7 @@ def int_to_float(int_value):
     return float(int_value) / 100.0
 
 # Load in the network
-model_name = "standard_993"
+model_name = "standard_999"
 
 folder_name = get_ws_path() + "ml_models/" + model_name + "/"
 net = torch.load(folder_name + "net.pkl")
@@ -279,4 +279,3 @@ while(1):
     frame = update_frame(nx_m, x1_m, y1_m, vx1_ms, vy1_ms, x2_m, y2_m, vx2_ms, vy2_ms)
 
 cv2.destroyAllWindows()
-
