@@ -1,5 +1,18 @@
 """
 Creates and trains a standard neural network for two balls
+
+Assumptions about data:
+  We have 10 features () :
+    4 features per ball for 2 balls
+        px,py position of ball relative to neato
+        vx,vy velocity of ball relative to neato
+    2 features for robot
+        rx,ry position of robot in global frame
+
+  and 1 output: v_N : x velocity of the Neato
+
+  In vector form: [v_N px1 py1 vx1 vy1 px2 py2 vx2 vy2 rx ry]
+  Bias term is also encoded into our net
 """
 
 """ All necessary imports go here """
@@ -56,7 +69,7 @@ y_test = Variable(torch.tensor(y_test.astype(np.float32)))
 """ Train the model """
 
 net = TwoBallNN()
-epoch_list, grad_magnitudes, loss_list = train_net(net, X_train, y_train, X_test, y_test)
+epoch_list, grad_magnitudes, train_loss_list, test_loss_list = train_net(net, X_train, y_train, X_test, y_test)
 
 """ Save model and training session info """
 
@@ -91,7 +104,10 @@ except FileExistsError:
 torch.save(net, folder_name + "net.pkl")
 
 # Save the metrics
-metrics_dict = {"epochs": epoch_list, "grad_magnitudes": grad_magnitudes, "loss_list": loss_list}
+metrics_dict = {"epochs": epoch_list,
+                "grad_magnitudes": grad_magnitudes,
+                "train_loss_list": train_loss_list,
+                "test_loss_list": test_loss_list}
 metrics_file = open(folder_name + "metrics.pkl", 'ab')
 pickle.dump(metrics_dict, metrics_file)
 metrics_file.close()

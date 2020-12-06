@@ -31,7 +31,8 @@ def train_net(net, X_train, y_train, X_test, y_test, num_epochs=1000, learning_r
     optimizer = net.optimizerFunction
 
     grad_magnitudes = []
-    loss_list = []
+    train_loss_list = []
+    test_loss_list = []
     epoch_list = []
 
     # Go through all the epochs
@@ -40,9 +41,9 @@ def train_net(net, X_train, y_train, X_test, y_test, num_epochs=1000, learning_r
         optimizer.zero_grad()
 
         # Forward pass input data into
-        y_pred = net(X_train)
-        loss = lossFunction(y_pred, y_train)
-        loss.backward()
+        y_pred_train = net(X_train)
+        train_loss = lossFunction(y_pred_train, y_train)
+        train_loss.backward()
         optimizer.step()    # Does the update
 
         for name, param in net.named_parameters():
@@ -53,8 +54,13 @@ def train_net(net, X_train, y_train, X_test, y_test, num_epochs=1000, learning_r
             logging.info("epoch" + str(epoch))
             for name, param in net.named_parameters():
                 logging.info(str(name) + "value" + str(param.data) + "gradient" + str(param.grad))
-                logging.info(str(loss))
+                logging.info(str(train_loss))
                 epoch_list.append(epoch)
-                loss_list.append(loss)
+                train_loss_list.append(train_loss)
 
-    return epoch_list, grad_magnitudes, loss_list
+                # Save data for test dataset
+                y_pred_test = net(X_test)
+                test_loss = lossFunction(y_pred_test, y_test)
+                test_loss_list.append(test_loss)
+
+    return epoch_list, grad_magnitudes, train_loss_list, test_loss_list
