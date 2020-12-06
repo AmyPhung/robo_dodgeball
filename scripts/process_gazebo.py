@@ -30,6 +30,13 @@ from numpy.linalg import inv # Matrix inverse function
 import itertools
 import os
 from operator import itemgetter
+import sys
+
+# Model imports
+# TODO: Make this not break things if we're not using model - if I put this in the
+# if statement where the tensorflow import is, it breaks bc of local scope
+import torch
+from torch.autograd import Variable  # Data class for nn training and testing
 
 class ProcessGazebo():
     def __init__(self):
@@ -76,16 +83,26 @@ class ProcessGazebo():
         self.spawn = False
 
         if self.run_model: # Use for machine-learning-based controller
-            self.model_path = rospy.get_param('~model_path', "LSTM_05_002")
+            self.model_path = rospy.get_param('~model_path', None)
             self.twist_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
             self.model_depth = int(self.model_path.split("LSTM_", 1)[1].split("-", 1)[0])
             # print("Model depth: {}".format(self.model_depth))
             if self.model_path is not None:
-                from tensorflow import keras
-                self.model_inputs = None
-                self.model_output = None
-                self.model = keras.models.load_model(self.model_path)
-                self.model.summary()
+                if "LSTM" in self.model_path:
+                    rospy.loginfo("Running LSTM model")
+                    from tensorflow import keras
+                    self.model_inputs = None
+                    self.model_output = None
+                    self.model = keras.models.load_model(self.model_path)
+                    self.model.summary()
+                elif "standard" in self.model_path:
+                    rospy.loginfo("Running standard model")
+                    # Load in the network
+                    self.var_type = Variable
+                    self.model = torch.load(self.model_path + "/net.pkl")
+                else:
+                    rospy.logerr("Model name invalid")
+
         else: # Use human controller
             self.twist_sub = rospy.Subscriber("/cmd_vel", Twist, self.twistCB)
 
@@ -261,18 +278,30 @@ class ProcessGazebo():
 
                 # Send the model inputs if testing the model
                 if self.run_model:
-                    # Prepare model inputs
+                    if "LSTM" in self.model_path:
+                        # Prepare model inputs
+                        self.prepareData() # TODO: how does it know how many pts to use?
+                        if self.model_inputs is None:
+                            continue
+                        # Run the inputs through the model
+                        self.model_inputs = self.model_inputs.reshape(
+                            (1, self.model_inputs.shape[0], self.model_inputs.shape[1]))
+                        self.model_output = self.model.predict(np.array(self.model_inputs))
+                        self.twist_pub.publish(Twist(linear=Vector3(x=self.model_output)))
+                    elif "standard" in self.model_path:
+                        self.prepareData(model_depth=1) # Only use the most recent pt
+                        if self.model_inputs is None:
+                            continue
+                        # Convert data to tensor for input into neural net
+                        input_data = Variable(torch.tensor(self.model_inputs[0].astype(np.float32)))
 
-                    self.prepareData(self.model_depth)
-                    if self.model_inputs is None:
-                        continue
-                    # Run the inputs through the model
-                    print(self.model_inputs.shape)
-                    self.model_inputs = self.model_inputs.reshape(
-                        (1, self.model_inputs.shape[0], self.model_inputs.shape[1]))
-                    self.model_output = self.model.predict(np.array(self.model_inputs))
-                    print("MODEL OUTPUT: ", self.model_output)
-                    self.twist_pub.publish(Twist(linear=Vector3(x=self.model_output)))
+                        # Get output from network
+                        output_data = self.model(input_data)
+
+                        # extract the velocity of the neato
+                        self.model_output = output_data.data.numpy()[0] # Output cmd from model
+                        self.twist_pub.publish(Twist(linear=Vector3(x=self.model_output)))
+            print("asdf")
             self.update_rate.sleep()
 
 if __name__ == "__main__":

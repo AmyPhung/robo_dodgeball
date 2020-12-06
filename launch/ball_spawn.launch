@@ -9,8 +9,9 @@
   <node type="ball_spawn.py" name="ball_spawn"
     pkg="ml_comprobo" output="screen">
     <!--Specifies trajectory of balls (center, straight, neato, random)-->
-    <param name="targeting" value="random"/>
     <param name="use_origin" value="$(arg use_origin)"/>
+    <!--Specifies trajectory of balls (center, straight, neato, random, gaussian)-->
+    <param name="targeting" value="gaussian"/>
     <!--SPAWNING BOX FOR THE BALLS-->
     <param name="spawn_x_min" value="-1.5"/>
     <param name="spawn_x_max" value="1.5"/>
