@@ -110,6 +110,11 @@ class ball_spawn(object):
         elif self.targeting == "center":
             x_tar = 0
             y_tar = 0
+        elif self.targeting == "gaussian":
+            # Mostly target neato, but some balls may miss
+            neato_pose = self.get_model("mobile_base", "world").pose
+            x_tar = neato_pose.position.x + random.normalvariate(0,1)
+            y_tar = 0
         else: # method == "random":
             x_tar = random.uniform(self.spawn_x_min, self.spawn_x_max)
             y_tar = 0
