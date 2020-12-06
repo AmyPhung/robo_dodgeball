@@ -4,7 +4,7 @@
   <arg name="dodgeball_prefix" default="ball"/>
   <arg name="robot_name" default="mobile_base"/>
   <arg name="num_dodgeballs" default="2"/>
-  <arg name="use_joystick" default="true"/> <!-- If false, will use keyboard -->
+  <arg name="use_joystick" default="false"/> <!-- If false, will use keyboard -->
 
   <node type="process_gazebo.py" name="record_training_data"
     pkg="ml_comprobo" output="screen">
@@ -13,7 +13,7 @@
     <param name="robot_name" value="$(arg robot_name)"/>
     <param name="num_dodgeballs" value="$(arg num_dodgeballs)"/>
     <param name="run_model" value="1"/>
-    <param name="model_path" value="$(find ml_comprobo)/ml_models/LSTM_05_005"/>
+    <param name="model_path" value="$(find ml_comprobo)/ml_models/standard_999"/>
     <param name="model_type" value="tf"/>
   </node>
 
