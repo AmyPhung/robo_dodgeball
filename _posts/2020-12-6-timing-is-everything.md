@@ -7,10 +7,6 @@ subtitle: How do you teach a neural net about time?
 #share-img: /assets/img/path.jpg
 ---
 
-
-![Dataset Diagram](/ml_comprobofinal/img/dataset_diagram.png){: .mx-auto.d-block :}
-![Dataset collection in gazebo](/ml_comprobofinal/img/training_data.gif){: .mx-auto.d-block :}
-
 One of the potential limitations of our first model is that it only looks at the current positions of the balls in the world. 
 This is a tricky problem, most simple Neural Net models are made to perform on a single timestep’s information.
 
@@ -37,8 +33,14 @@ Several baseline models were trained.
 These revolved around the robot dodging only straight balls, balls at random angles, and balls that always targeted the neato.
 All of these models showed some degree of promise although they didn’t successfully dodge balls. Please take a look at them below.
 
+##### Balls spawning straight
+
 ![Striaght Model](/ml_comprobofinal/img/blog_straight.gif){: .mx-auto.d-block :}
+
+##### Balls spawning randomly
 ![Random](/ml_comprobofinal/img/blog_random.gif){: .mx-auto.d-block :}
+
+##### Balls spawning towards the Neato
 ![Neato](/ml_comprobofinal/img/blog_neato.gif){: .mx-auto.d-block :}
 
 As you can see, sometimes the model seems to make very good choices and sometimes very poor ones.
