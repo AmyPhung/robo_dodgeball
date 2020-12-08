@@ -12,7 +12,7 @@
     <param name="robot_name" value="$(arg robot_name)"/>
     <param name="num_dodgeballs" value="$(arg num_dodgeballs)"/>
     <param name="run_model" value="1"/>
-    <param name="model_path" value="$(find ml_comprobo)/ml_models/LSTM_05_003"/>
+    <param name="model_path" value="$(find ml_comprobo)/ml_models/LSTM_08-015_003"/>
     <param name="model_type" value="tf"/>
   </node>
 

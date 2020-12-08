@@ -76,7 +76,8 @@ class ProcessGazebo():
         if self.run_model: # Use for machine-learning-based controller
             self.model_path = rospy.get_param('~model_path', "LSTM_05_002")
             self.twist_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
-
+            self.model_depth = int(self.model_path.split("LSTM_", 1)[1].split("-", 1)[0])
+            # print("Model depth: {}".format(self.model_depth))
             if self.model_path is not None:
                 from tensorflow import keras
                 self.model_inputs = None
@@ -255,13 +256,15 @@ class ProcessGazebo():
                 # Send the model inputs if testing the model
                 if self.run_model:
                     # Prepare model inputs
-                    self.prepareData()
+
+                    self.prepareData(self.model_depth)
                     if self.model_inputs is None:
                         continue
                     # Run the inputs through the model
                     self.model_inputs = self.model_inputs.reshape(
                         (1, self.model_inputs.shape[0], self.model_inputs.shape[1]))
                     self.model_output = self.model.predict(np.array(self.model_inputs))
+                    print("MODEL OUTPUT: ", self.model_output)
                     self.twist_pub.publish(Twist(linear=Vector3(x=self.model_output)))
             self.update_rate.sleep()
 

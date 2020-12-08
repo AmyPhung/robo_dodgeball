@@ -23,17 +23,27 @@ def split_sequences(sequences, n_steps):
 
 dataset_loc = os.path.expanduser("~/catkin_ws/src/ml_comprobofinal/datasets/")
 model_loc = os.path.expanduser("~/catkin_ws/src/ml_comprobofinal/ml_models/")
-dataset_names = ["007_2ball_straight_1.5x5_vector_keyboard_nathan.npy", "008_2ball_straight_1.5x5_vector_keyboard_nathan.npy"]#["009_2ball_random_1.5x5_vector_keyboard_nathan.npy", "010_2ball_random_1.5x5_vector_keyboard_nathan.npy", "011_2ball_random_1.5x5_vector_keyboard_nathan.npy", "012_2ball_random_1.5x5_vector_keyboard_nathan.npy"]
+dataset_names = ["004_2ball_neato_1.5x5_vector_joystick_amy.npy",
+                 "005_2ball_neato_1.5x5_vector_joystick_amy.npy",
+                 "006_2ball_neato_1.5x5_vector_keyboard_nathan.npy",
+                 "007_2ball_straight_1.5x5_vector_keyboard_nathan.npy", "008_2ball_straight_1.5x5_vector_keyboard_nathan.npy",
+                 "009_2ball_random_1.5x5_vector_keyboard_nathan.npy",
+                 "010_2ball_random_1.5x5_vector_keyboard_nathan.npy",
+                 "011_2ball_random_1.5x5_vector_keyboard_nathan.npy",
+                 "012_2ball_random_1.5x5_vector_keyboard_nathan.npy",
+                 "012_2ball_random_1.5x5_vector_keyboard_nathan.npy",
+                 "013_2ball_gaussian_1.5x5_vector_joystick_amy.npy"]
 n_steps = 8
 hidden = 15
-epochs = 90
+epochs = 100
+mirror = True
 if __name__ == "__main__":
     input = None
     output = None
     print("_{:02d}".format(n_steps))
     save_name = "_{:02d}-{:03d}".format(n_steps, hidden)
     for dataset in dataset_names:
-        save_name += "_"+dataset.split("_")[0]
+        save_name += "_" + dataset.split("_")[0]
         raw_data = np.load(dataset_loc + dataset)
         file_input, file_output = split_sequences(raw_data, n_steps)
         n_features = file_input.shape[2]
@@ -43,6 +53,14 @@ if __name__ == "__main__":
         else:
             input = file_input
             output = file_output
+        # Now add the mirrored
+        if mirror:
+            mirrored_data = np.copy(raw_data)
+            cols_to_swap = (0, 1, 3, 5, 7, 9) # Only reverse the motor command and things along that axis
+            mirrored_data[:, cols_to_swap] *= -1
+            mirrored_file_input, mirrored_file_output = split_sequences(mirrored_data, n_steps)
+            input = np.concatenate((input, mirrored_file_input))
+            output = np.concatenate((output, mirrored_file_output))
 
     print("Model Input Shape: ", input.shape)
     print("Model Output Shape: ", output.shape)
