@@ -47,6 +47,8 @@ class ball_spawn(object):
         self.robot_name = rospy.get_param('~robot_name', 'mobile_base')
         # Number of closest dodgeballs to keep track of
         self.num_dodgeballs = rospy.get_param('~num_dodgeballs', 5)
+        # get Origin mode or not, boolean
+        self.stay_origin = rospy.get_param('~use_origin', "True") == "True"
         # Grab the spawn Location!!
         self.spawn_x_min = rospy.get_param('~spawn_x_min', -3)
         self.spawn_x_max = rospy.get_param('~spawn_x_max', 3)
@@ -88,9 +90,12 @@ class ball_spawn(object):
 
     def gen_ball_loc(self):
         """Generate the starting location of the ball based on mode"""
-        x = random.uniform(self.spawn_x_min, self.spawn_x_max)
+        neato_pose = self.get_model("mobile_base", "world").pose
+        x_loc = neato_pose.position.x
+
+        x = random.uniform(self.spawn_x_min, self.spawn_x_max) + x_loc
         y = random.uniform(self.spawn_y_min, self.spawn_y_max)
-        z = random.uniform(0, 0)
+        z = 0 #random.uniform(0, 0)
         return x, y, z
 
     def gen_ball_vel(self, loc):
@@ -116,7 +121,8 @@ class ball_spawn(object):
             x_tar = neato_pose.position.x + random.normalvariate(0,1)
             y_tar = 0
         else: # method == "random":
-            x_tar = random.uniform(self.spawn_x_min, self.spawn_x_max)
+            neato_pose = self.get_model("mobile_base", "world").pose
+            x_tar = neato_pose.position.x + random.uniform(self.spawn_x_min, self.spawn_x_max)
             y_tar = 0
         # Generate the velocities
         y_to_target = y_tar - loc[1]
