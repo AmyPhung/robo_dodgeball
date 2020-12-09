@@ -24,7 +24,7 @@
     <param name="targeting" value="random"/>
 
     <param name="ball_model_file"
-      value="$(find ml_comprobo)/model/dodgeball/model.sdf"/>
+      value="$(find ml_comprobo)/model/dodgeball/"/>
     <param name="dodgeball_prefix" value="$(arg dodgeball_prefix)"/>
     <param name="robot_name" value="$(arg robot_name)"/>
     <param name="num_dodgeballs" value="$(arg num_dodgeballs)"/>

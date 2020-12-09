@@ -66,9 +66,15 @@ class ball_spawn(object):
         self.ball_num = 0
         self.ball_names = []  # List to keep track of which balls are in frame
         if rospy.has_param('~ball_model_file'):
-            self.dodgeball = open(os.path.expanduser(rospy.get_param('~ball_model_file')), 'r').read()
+            dodgeball_path = os.path.expanduser(rospy.get_param('~ball_model_file'))
+            self.dodgeballs = []
+            for file in os.listdir(dodgeball_path):
+                if file.endswith(".sdf"):
+                    ball_path = os.path.join(dodgeball_path, file)
+                    self.dodgeballs.append(open(ball_path, 'r').read())
         else:
-            self.dodgeball = open(os.path.expanduser('~/catkin_ws/src/ml_comprobofinal/model/dodgeball/model.sdf'), 'r').read()
+            self.dodgeballs = [ open(os.path.expanduser('~/catkin_ws/src/ml_comprobofinal/model/dodgeball/model.sdf'), 'r').read()]
+
         self.running = False
         self.done = False
 
@@ -110,7 +116,7 @@ class ball_spawn(object):
             y_tar = 0
         elif self.targeting == "neato":
             neato_pose = self.get_model("mobile_base", "world").pose
-            x_tar = neato_pose.position.x
+            x_tar = neato_pose.position.x + random.uniform(-1, 1)
             y_tar = 0
         elif self.targeting == "center":
             x_tar = 0
@@ -147,7 +153,7 @@ class ball_spawn(object):
             twist=ball_twist)
         self.spawn_model(
             model_name=ball_name,
-            model_xml=self.dodgeball,
+            model_xml=random.choice(self.dodgeballs),
             robot_namespace='',
             initial_pose=ball_pose
         )
