@@ -5,6 +5,7 @@
   <arg name="robot_name" default="mobile_base"/>
   <arg name="num_dodgeballs" default="2"/>
   <arg name="use_joystick" default="false"/> <!-- If false, will use keyboard -->
+  <arg name="use_origin" default="False"/>
 
   <node type="process_gazebo.py" name="process_gazebo"
     pkg="ml_comprobo" output="screen">
@@ -13,6 +14,7 @@
     <param name="robot_name" value="$(arg robot_name)"/>
     <param name="num_dodgeballs" value="$(arg num_dodgeballs)"/>
     <param name="run_model" value="0"/>
+    <param name="use_origin" value="$(arg use_origin)"/>
   </node>
 
   <!-- Start up ball spawner -->
@@ -20,6 +22,7 @@
     <arg name="dodgeball_prefix" value="$(arg dodgeball_prefix)"/>
     <arg name="robot_name" value="$(arg robot_name)"/>
     <arg name="num_dodgeballs" value="$(arg num_dodgeballs)"/>
+    <arg name="use_origin" value="$(arg use_origin)"/>
   </include>
 
   <!-- Start up controller -->

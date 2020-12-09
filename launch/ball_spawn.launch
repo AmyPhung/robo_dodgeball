@@ -4,12 +4,13 @@
   <arg name="dodgeball_prefix" default="ball"/>
   <arg name="robot_name" default="mobile_base"/>
   <arg name="num_dodgeballs" default="2"/>
+  <arg name="use_origin" default="True"/>
 
   <node type="ball_spawn.py" name="ball_spawn"
     pkg="ml_comprobo" output="screen">
     <!--Specifies trajectory of balls (center, straight, neato, random)-->
     <param name="targeting" value="random"/>
-
+    <param name="use_origin" value="$(arg use_origin)"/>
     <!--SPAWNING BOX FOR THE BALLS-->
     <param name="spawn_x_min" value="-1.5"/>
     <param name="spawn_x_max" value="1.5"/>

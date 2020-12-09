@@ -56,7 +56,9 @@ class ProcessGazebo():
         self.num_dodgeballs = rospy.get_param('~num_dodgeballs', 5)
         # Get whether this is a recording or inference
         self.run_model = rospy.get_param('~run_model', 0)
-
+        # Get what size model we should be using (the origin inputs?)
+        self.use_origin = str(rospy.get_param('~use_origin', "True")).strip() == "True"
+        print("Using origin: ", self.use_origin)
         # Save file location
         if rospy.has_param('~save_filename'):
             self.save_filename = rospy.get_param('~save_filename')
@@ -215,7 +217,11 @@ class ProcessGazebo():
         n_balls = list(itertools.chain(*n_balls))
 
         # Record data point
-        new_pt = [vel_cmd] + n_balls + robot_pos
+
+        if self.use_origin:
+            new_pt = [vel_cmd] + n_balls + robot_pos
+        else:
+            new_pt = [vel_cmd] + n_balls
         self.output_data.append(new_pt)
 
     def prepareData(self, model_depth=5):
@@ -261,6 +267,7 @@ class ProcessGazebo():
                     if self.model_inputs is None:
                         continue
                     # Run the inputs through the model
+                    print(self.model_inputs.shape)
                     self.model_inputs = self.model_inputs.reshape(
                         (1, self.model_inputs.shape[0], self.model_inputs.shape[1]))
                     self.model_output = self.model.predict(np.array(self.model_inputs))
