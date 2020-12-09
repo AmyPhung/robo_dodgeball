@@ -6,7 +6,7 @@ subtitle: How do you teach a neural net about time?
 #thumbnail-img: /assets/img/thumb.png
 #share-img: /assets/img/path.jpg
 ---
-
+## Neural Net Research
 One of the potential limitations of our first model is that it only looks at the current positions of the balls in the world. 
 This is a tricky problem, most simple Neural Net models are made to perform on a single timestep’s information.
 
@@ -18,7 +18,10 @@ We are trying to employ a similar practice here in which we convolute throughout
 
 Further research into this idea brought us to a popular style of neural networks.
 They are called Long Short-Term Memory Networks -- or LSTM for short.
-These networks convolute in time and are very commonly used in a field of ML related to time series forecasting. 
+These networks convolute in time and are very commonly used in a field of ML related to time series forecasting. They work by taking a set of previous data and then predicting an output based on that. These networks have applications in areas like text prediction where the past n words are used as the model's inputs and the goal is to predict the next word! See the below graphic for a representation.
+
+![LSTM Diagram](/ml_comprobofinal/img/tds_LSTM_example.png){: .mx-auto.d-block :}
+Credit: https://towardsdatascience.com/lstm-by-example-using-tensorflow-feb0c1968537 
 
 This format lends itself exactly to our data: we have data points at a reproducible time step that describe the world that the robot is in.
 This data includes the positions of the balls and their trajectories. We create training data by piloting the robot ourselves in our simulation.
@@ -29,6 +32,7 @@ This model then generates the output motor command.
 The great news about this is that we simply have to do a little data wrangling to change the outputs that are stored for every timestep and put them into this format.
 We used tensorflow to get this working (their was more documentation and examples [https://www.tensorflow.org/tutorials/structured_data/time_series] )
 
+### Some Preliminary Results
 Several baseline models were trained. 
 These revolved around the robot dodging only straight balls, balls at random angles, and balls that always targeted the neato.
 All of these models showed some degree of promise although they didn’t successfully dodge balls. Please take a look at them below.
