@@ -83,6 +83,10 @@ if __name__ == "__main__":
     # fit model
     #model.fit(input, output, epochs=1000, verbose=1)
     history = model.fit(input, output, epochs=epochs, validation_split=0.2)
+    export_path_sm = model_loc + "LSTM" + save_name
+    print("Saving to: ", export_path_sm)
+    tf.saved_model.save(model, export_path_sm)
+
     # plot train and validation loss
     pyplot.plot(history.history['loss'][2:])
     pyplot.plot(history.history['val_loss'][2:])
@@ -90,10 +94,7 @@ if __name__ == "__main__":
     pyplot.ylabel('loss')
     pyplot.xlabel('epoch')
     pyplot.legend(['train', 'validation'], loc='upper right')
+    pyplot.savefig((export_path_sm + "/loss.png"))
     pyplot.show()
-
-    export_path_sm = model_loc + "LSTM" + save_name
-    print("Saving to: ", export_path_sm)
-    tf.saved_model.save(model, export_path_sm)
 
 
