@@ -64,7 +64,8 @@ class ProcessGazebo():
         # Get whether this is a recording or inference
         self.run_model = rospy.get_param('~run_model', 0)
         # Get what size model we should be using (the origin inputs?)
-        self.use_origin = str(rospy.get_param('~use_origin', "True")).strip() == "True"
+        # self.use_origin = str(rospy.get_param('~use_origin', "True")).strip() == "True"
+        self.use_origin = rospy.get_param('~use_origin', "true")
         print("Using origin: ", self.use_origin)
         # Save file location
         if rospy.has_param('~save_filename'):
@@ -85,7 +86,7 @@ class ProcessGazebo():
         if self.run_model: # Use for machine-learning-based controller
             self.model_path = rospy.get_param('~model_path', None)
             self.twist_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
-            self.model_depth = int(self.model_path.split("LSTM_", 1)[1].split("-", 1)[0])
+            # self.model_depth = int(self.model_path.split("LSTM_", 1)[1].split("-", 1)[0])
             # print("Model depth: {}".format(self.model_depth))
             if self.model_path is not None:
                 if "LSTM" in self.model_path:
@@ -231,15 +232,18 @@ class ProcessGazebo():
 
         # Get info of n closest balls
         n_balls = list(itemgetter(*nearest_idxs)(balls))
-        n_balls = list(itertools.chain(*n_balls))
+
+        if self.num_dodgeballs != 1:
+            n_balls = list(itertools.chain(*n_balls))
 
         # Record data point
-
+        print(self.use_origin)
         if self.use_origin:
             new_pt = [vel_cmd] + n_balls + robot_pos
         else:
             new_pt = [vel_cmd] + n_balls
         self.output_data.append(new_pt)
+        print(self.output_data)
 
     def prepareData(self, model_depth=5):
         if len(self.output_data) < model_depth:
@@ -292,16 +296,17 @@ class ProcessGazebo():
                         self.prepareData(model_depth=1) # Only use the most recent pt
                         if self.model_inputs is None:
                             continue
+
+                        # print(input_data)
                         # Convert data to tensor for input into neural net
                         input_data = Variable(torch.tensor(self.model_inputs[0].astype(np.float32)))
-
+                        print(self.model_inputs[0])
                         # Get output from network
                         output_data = self.model(input_data)
 
                         # extract the velocity of the neato
                         self.model_output = output_data.data.numpy()[0] # Output cmd from model
                         self.twist_pub.publish(Twist(linear=Vector3(x=self.model_output)))
-            print("asdf")
             self.update_rate.sleep()
 
 if __name__ == "__main__":

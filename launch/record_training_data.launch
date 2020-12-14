@@ -3,9 +3,9 @@
 <launch>
   <arg name="dodgeball_prefix" default="ball"/>
   <arg name="robot_name" default="mobile_base"/>
-  <arg name="num_dodgeballs" default="2"/>
-  <arg name="use_joystick" default="false"/> <!-- If false, will use keyboard -->
-  <arg name="use_origin" default="False"/>
+  <arg name="num_dodgeballs" default="1"/>
+  <arg name="use_joystick" default="true"/> <!-- If false, will use keyboard -->
+  <arg name="use_origin" default="false"/>
 
   <node type="process_gazebo.py" name="process_gazebo"
     pkg="ml_comprobo" output="screen">

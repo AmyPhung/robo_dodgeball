@@ -124,7 +124,7 @@ class ball_spawn(object):
         elif self.targeting == "gaussian":
             # Mostly target neato, but some balls may miss
             neato_pose = self.get_model("mobile_base", "world").pose
-            x_tar = neato_pose.position.x + random.normalvariate(0,1)
+            x_tar = neato_pose.position.x + random.normalvariate(0,0.3)
             y_tar = 0
         else: # method == "random":
             neato_pose = self.get_model("mobile_base", "world").pose

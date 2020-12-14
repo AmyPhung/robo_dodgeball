@@ -1,18 +1,5 @@
 """
-Creates and trains a standard neural network for two balls
-
-Assumptions about data:
-  We have 10 features () :
-    4 features per ball for 2 balls
-        px,py position of ball relative to neato
-        vx,vy velocity of ball relative to neato
-    2 features for robot
-        rx,ry position of robot in global frame
-
-  and 1 output: v_N : x velocity of the Neato
-
-  In vector form: [v_N px1 py1 vx1 vy1 px2 py2 vx2 vy2 rx ry]
-  Bias term is also encoded into our net
+Creates and trains a standard neural network
 """
 
 """ All necessary imports go here """
@@ -31,6 +18,7 @@ from torch.autograd import Variable  # Data class for nn training and testing
 
 # Import helper scripts for neural net
 from TwoBallNN import TwoBallNN
+from OneBallNN import OneBallNN
 from net_trainer import train_net
 
 from helpers import get_ws_path
@@ -39,7 +27,7 @@ from helpers import get_ws_path
 
 ws_path = get_ws_path()
 dataset_loc = ws_path + "datasets/"
-dataset_name = "013_2ball_gaussian_1.5x5_vector_joystick_amy.npy"
+dataset_name = "021_1ball_gaussian_1.5x5_vector_joystick_amy.npy"
 
 raw_data = np.load(dataset_loc + dataset_name)
 
@@ -68,7 +56,8 @@ y_test = Variable(torch.tensor(y_test.astype(np.float32)))
 
 """ Train the model """
 
-net = TwoBallNN()
+# net = TwoBallNN()
+net = OneBallNN()
 epoch_list, grad_magnitudes, train_loss_list, test_loss_list = train_net(net, X_train, y_train, X_test, y_test)
 
 """ Save model and training session info """
