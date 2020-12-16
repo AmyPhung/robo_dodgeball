@@ -38,7 +38,7 @@ dataset_names = [
                  "021_2ball_neato_1.5x5_vector_key_nathan_noorigin.npy",
                  "022_2ball_neato_1.5x5_vector_key_nathan_noorigin.npy"]
 n_steps = 8
-hidden = 15
+hidden = 20
 epochs = 100
 mirror = True
 use_origin = False
