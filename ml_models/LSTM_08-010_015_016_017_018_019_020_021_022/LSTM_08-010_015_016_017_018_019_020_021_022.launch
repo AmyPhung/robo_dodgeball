@@ -14,7 +14,7 @@
     <param name="num_dodgeballs" value="$(arg num_dodgeballs)"/>
     <param name="use_origin" value="$(arg use_origin)"/>
     <param name="run_model" value="1"/>
-    <param name="model_path" value="$(find ml_comprobo)/ml_models/LSTM_05-015_015_016_017_018_019_020_021_022"/>
+    <param name="model_path" value="$(find ml_comprobo)/ml_models/LSTM_08-010_015_016_017_018_019_020_021_022"/>
     <param name="model_type" value="tf"/>
   </node>
 

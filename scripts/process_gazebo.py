@@ -267,11 +267,11 @@ class ProcessGazebo():
                     if self.model_inputs is None:
                         continue
                     # Run the inputs through the model
-                    print(self.model_inputs.shape)
+                    # print(self.model_inputs.shape)
                     self.model_inputs = self.model_inputs.reshape(
                         (1, self.model_inputs.shape[0], self.model_inputs.shape[1]))
                     self.model_output = self.model.predict(np.array(self.model_inputs))
-                    print("MODEL OUTPUT: ", self.model_output)
+                    # print("MODEL OUTPUT: ", self.model_output)
                     self.twist_pub.publish(Twist(linear=Vector3(x=self.model_output)))
             self.update_rate.sleep()
 

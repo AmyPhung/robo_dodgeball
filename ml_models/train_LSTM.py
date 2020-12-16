@@ -24,6 +24,11 @@ def split_sequences(sequences, n_steps):
 dataset_loc = os.path.expanduser("~/catkin_ws/src/ml_comprobofinal/datasets/")
 model_loc = os.path.expanduser("~/catkin_ws/src/ml_comprobofinal/ml_models/")
 dataset_names = [
+                 "009_2ball_random_1.5x5_vector_keyboard_nathan.npy",
+                 "010_2ball_random_1.5x5_vector_keyboard_nathan.npy",
+                 "011_2ball_random_1.5x5_vector_keyboard_nathan.npy",
+                 "012_2ball_random_1.5x5_vector_keyboard_nathan.npy",
+                 "014_2ball_random_1.5x5_vector_keyboard_nathan_noorigin.npy",
                  "015_2ball_neato_1.5x5_vector_key_nathan_noorigin.npy",
                  "016_2ball_neato_1.5x5_vector_key_nathan_noorigin.npy",
                  "017_2ball_neato_1.5x5_vector_key_nathan_noorigin.npy",
@@ -33,7 +38,7 @@ dataset_names = [
                  "021_2ball_neato_1.5x5_vector_key_nathan_noorigin.npy",
                  "022_2ball_neato_1.5x5_vector_key_nathan_noorigin.npy"]
 n_steps = 8
-hidden = 10
+hidden = 15
 epochs = 100
 mirror = True
 use_origin = False
