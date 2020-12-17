@@ -17,6 +17,7 @@ navbar-links:
   Machine Learning:
     - Neural Network: "neural_network"
     - LSTM: "LSTM"
+  System Architecture: "system_architecture"
   Blog: "blog"
 #  About Us: "about"
 
