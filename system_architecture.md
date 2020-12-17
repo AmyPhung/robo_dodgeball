@@ -25,16 +25,16 @@ These systems are broken down into finer detail in the sections below.
 
 ## System Architecture 
 ### Ball Spawner 
-This code lives in the script `ball_spawner.py` [can also talk about ROS launch files/params and such here]
+This code lives in the script `ball_spawner.py` and is controlled via [ros parameters](http://wiki.ros.org/roscpp_tutorials/Tutorials/Parameters) to ensure that the environement is consistent across all parts of the system (think spawning the same number of balls as recording and generating model inputs for)
 
 If this entire system has a heart -- the ball spawner is it. The ball spawner is in charge of all things related to **managing** balls in the system. 
 This boils down to several things:
 - Spawning new balls in the appropriate spots
 - Deleting balls that are no longer a “threat”
 
-For our purposes, we are interested in balls spawning in several different scenarios. The reason for  building a robust ball spawner is so the difficulty of our problem can easily be scaled. For example we were interested in making a system that dodged single balls at a time as well as a system that dodged multiple.
+For our purposes, we are interested in balls spawning in several different scenarios. The reason for  building a robust ball spawner is so the difficulty of our problem can easily be scaled. For example: we were interested in making a system that dodged single balls at a time as well as a system that dodged multiple.
 
-To implement this we use a singular ROS node that uses Gazebo Services
+To implement this we use a singular ROS node that uses [Gazebo Services]
 (http://gazebosim.org/tutorials/?tut=ros_comm#Services:Createanddestroymodelsinsimulation)
 Gazebo services allows for easy creation and deletion of gazebo models (aka dodgeballs). 
 
@@ -52,7 +52,7 @@ The script `process_gazebo.py` starts up the main processing node which handles 
 + `use_origin`: Sets whether or not the robot's position in global coordinates should be used in the model
 + `save_filename`: Dataset save file location (will save to a .npy file)
 + `model_path`: File location of the machine-learning based controller - assumes LSTM models start with the prefix `LSTM` and standard models with the prefix `standard`
-+ `rate`: Node update rate in hz
++ `rate`: Node update rate in Hz
 
 This node has two primary modes - a “data collection” mode, and a “run model” mode. When the `run_model` ROS parameter is set to 0, the node will run in its data collection mode. The function that does most of the heavy lifting here is the `recordDataPoint` function, which records each of the balls’ position and velocity relative to the robot as well as the current operator command. It records this data for the first `n` balls, where `n` is equal to the number of dodgeballs as specified by the ROS parameter `num_dodgeballs`. If `use_origin` is set to true, it will also record the robot’s position in global coordinates as part of the training dataset. All of this data then gets saved to a dataset as a `.npy` file, and is used later for training our machine learning models. 
 
