@@ -15,8 +15,8 @@ author: Ever Gonzalez, Amy Phung, Nathan Faber
 
 navbar-links:
   Machine Learning:
-    + Neural Network: "neural_network"
-    + LSTM: "LSTM"
+    - Neural Network: "neural_network"
+    - LSTM: "LSTM"
   Blog: "blog"
 #  About Us: "about"
 
