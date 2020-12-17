@@ -18,8 +18,6 @@ Since our network was only a single layer with no activation functions, we could
 
 We decided to leave this network soon after we created it as we realized that the function we wanted our network to learn was inherently nonlinear, even through the data it collected from our basic simulation. Remember, our goal is for the network to learn a function that maps ball state(s) to a robot velocity. In our basic simulation for training data, our robot would only move when a ball’s x position relative to the robot was approximately 0. At all other times, we the robot would do nothing as it wasn’t in danger of being hit by a ball. If we plotted the desired function from the ball’s relative x position to the robot’s velocity, it would look like a flat line until the relative x position was exactly 0, at which point the velocity would spike up or down depending on which way the robot needed to move, and then go back to being a flat line shortly after. This function cannot be approximated well enough for our purposes with only a linear mapping.
 
-[INSERT GRAPH OF FUNCTION FROM BALL X TO ROBOT VELOCITY]
-
 ### Second Pass:
 Once we knew we could successfully create a neural network and train it using Pytorch, we began working on our first implementation that would be compatible with our simulation in Gazebo, which rolled multiple balls towards the robot at varying angles and velocities.
 
@@ -29,15 +27,17 @@ We decided to add an intermediate layer and an activation function to use betwee
 
 We also realized that it could be potentially quite useful to be able to be able to specifically try out specific cases more granularly than we could with the Gazebo simulation. To this end, we built a visualizer with a simple GUI that allowed us to specify two ball states with a visual representation of what those ball states would actually look like and a visualization of what the network output as a robot velocity. In addition to this, we added a simple plot utility that would show us the loss of the network over time. This made it possible for us to quickly check whether the network was actually learning anything, and whether it was overfitting to our training data.
 
-[INSERT PICTURE OF GUI]
+This is what our gui looked like in Google Colab.
+<img src="/ml_comprobofinal/img/colab_gui.jpg" width="1500"/>
+All we had to do was move the sliders for the different ball positions, velocities, and robot positions, and then we would see a green arrow at the bottom that indicated where the robot was going to move in response to those inputs and how fast.
 
 To implement this in Gazebo, we added an option to our main processing node to load in a pytorch model and use it to drive the robot. We also decided to port over the model training, the visualizer, and the plotting functionality into local Python scripts rather than separating them into Google Colab notebooks to make our workflow smoother.
 
-*Explain the weird case where two balls can have the same angle of attack but be in two completely different places/ have two completely different velocities…..
+This is what the gui looked like when run locally.
+<img src="/ml_comprobofinal/img/local_gui.jpg" width="1500"/>
+If you look at the values set by the sliders, you'll notice that they aren't nice floating point numbers. This is because we wanted an easy way to port the visualizer into a local script with minimal refactoring, and the best way we found to do this was through a minimal gui provided by OpenCV. Unfortunately, the sliders in this gui only accept positive integers as inputs. Hence, the seemingly arbitrary slider values. To help with actually using the visualizer, the terminal prints out the state of the entire system in a human readable format.
 
-* When we trained and ported this model over into our Gazebo simulation…
-
-[INSERT GIF OF THIS MODEL IF WE HAVE ONE]
+One of the things we realized when we were visualizing our cases was that two balls could have the same angle of attack but actually have two completely different states. This made it quite confusing for us to parse results, and it made it difficult for the newtork to learn a good control policy. The network can't make good generalizations if two unique cases are presented as though they're the same case.
 
 We decided that as we moved forward, we would reduce our model to be less complex to minimize the number of factors that could be causing our network to perform poorly in certain cases. This would make debugging easier and likely also make it less likely for us to make a critical mistake in designing our model.
 
@@ -45,7 +45,5 @@ We decided that as we moved forward, we would reduce our model to be less comple
 Along the lines of simplicity and completeness, we decided to design our model to handle only a 1 ball case. In our simulation, there were actually several balls rolling towards the robot at once, but for our MVP, we could only choose to focus on dodging one ball at a time. More specifically, the robot would only try to dodge the closest ball at any given time.
 
 We also decided to represent the ball state using vectors so that every case would be unique. This meant we had 4 inputs into our model, the x and y position of the ball relative to the robot, and the x and y velocity of the ball relative to the global frame. We removed the intermediate layer but kept the activation functions.
-
-The performance of this model in our Gazebo simulation ...
 
 When we implemented this model and took a closer look at how this model was working under the hood, we found that the model was assigning a high weight to the x position of the ball, and a relatively lower weight to every other input. This makes sense logically as we would expect the robot to pay the most attention to the x position of the ball to know whether it should move and where it should move. However, this has an unintended consequence. If a ball is coming straight at the robot, that means its x is represented as a 0, or a value very close to zero. Even with a high weight attached to this value, it’s still too small for the model to move the robot out of the way. To do that, it would have to make an abstract connection between the x position of the ball and the x velocity of the ball, and learn that a ball with a small x position and a small x velocity means that the robot needs to move out of the way. Fortunately, this high weight on x position when the x position is close to zero does work well with balls that are coming in at angle, as these balls are less likely to hit the robot if it doesn’t move.
