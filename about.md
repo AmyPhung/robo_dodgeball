@@ -43,10 +43,12 @@ img {
 <div class="grid">
     <div class="single-col">
        <div class="content">
+          <center>
             <div class="image-cropper">
               <img src="/ml_comprobofinal/img/ever.jpeg" class="rounded" />
             </div>
            <h4> Everardo Gonzalez </h4>
+          </center>
        </div>
     </div>
     <div class="double-col">
