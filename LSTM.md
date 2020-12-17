@@ -33,4 +33,4 @@ __Robot running via ML using a 5 timestep and 15 neuron network__
 
 ![LSTM 5_15](/ml_comprobofinal/img/LSTM_05_15.gif)
 
-######__(View our blog post to see our various models running!)[https://everardog.github.io/ml_comprobofinal/2020-12-15-LSTM_models/]__
+#####__[View our blog post to see our various models running!](https://everardog.github.io/ml_comprobofinal/2020-12-15-LSTM_models/)__
