@@ -1,7 +1,7 @@
 ---
 layout: page
 title: About Us
-subtitle: go away stalkers
+subtitle: questionable info about a questionable team
 ---
 
 <style>
