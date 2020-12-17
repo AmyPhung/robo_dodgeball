@@ -20,7 +20,7 @@ Using these models, we were able to train a differential drive robot to dodge ba
 Interestingly enough, in addition to learning how to dodge balls, the models appear to have learned to emulate human reflexes too! 
 
 Curious to read about how we got to this point? Check out our other project webpages!
-+ ![Machine learning - LSTM](/ml_comprobofinal/LSTM)
-+ ![Machine learning - Standard Neural Networks](/ml_comprobofinal/neural_network)
-+ ![System Architecture](/ml_comprobofinal/system_architecture)
-+ ![Blog (for commentary)](/ml_comprobofinal/blog)
++ [Machine learning - LSTM](/ml_comprobofinal/LSTM)
++ [Machine learning - Standard Neural Networks](/ml_comprobofinal/neural_network)
++ [System Architecture](/ml_comprobofinal/system_architecture)
++ [Blog (for commentary)](/ml_comprobofinal/blog)
