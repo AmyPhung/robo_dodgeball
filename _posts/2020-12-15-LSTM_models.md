@@ -32,7 +32,7 @@ __5 timesteps 10 "neurons"__
 
 __5 timesteps 15 "neurons"__
 
-![05-015](/ml_comprobofinal/img/LSTM_05_015.gif){: .mx-auto.d-block :}
+![05-015](/ml_comprobofinal/img/LSTM_05_15.gif){: .mx-auto.d-block :}
 
 __5 timesteps 20 "neurons"__
 
@@ -40,25 +40,25 @@ __5 timesteps 20 "neurons"__
 
 __8 timesteps 10 "neurons"__
 
-![08-010](/ml_comprobofinal/img/LSTM_08-010_NICE.gif){: .mx-auto.d-block :}
+![08-010](/ml_comprobofinal/img/LSTM_08_010_NICE.gif){: .mx-auto.d-block :}
 
 __8 timesteps 15 "neurons"__
 
-![08-015](/ml_comprobofinal/img/LSTM_08-16.gif){: .mx-auto.d-block :}
+![08-015](/ml_comprobofinal/img/LSTM_08-015.gif){: .mx-auto.d-block :}
 
 __8 timesteps 20 "neurons"__
 
-![08-020](/ml_comprobofinal/img/LSTM_08-020.gif){: .mx-auto.d-block :}
+![08-020](/ml_comprobofinal/img/LSTM_08_020.gif){: .mx-auto.d-block :}
 
 __10 timesteps 15 "neurons"__
 
-![08-015](/ml_comprobofinal/img/LSTM_010-015.gif){: .mx-auto.d-block :}
+![08-015](/ml_comprobofinal/img/LSTM_10-015.gif){: .mx-auto.d-block :}
 
 __10 timesteps 20 "neurons"__
 
-![08-020](/ml_comprobofinal/img/LSTM_010-020.gif){: .mx-auto.d-block :}
+![08-020](/ml_comprobofinal/img/LSTM_10-20.gif){: .mx-auto.d-block :}
 
 
 __5 timesteps 10 "neurons (This used ALL datasets, which included slightly different inputs and styles of control)"__
 
-![ALL](/ml_comprobofinal/img/LSTM_ALL_05-010.gif){: .mx-auto.d-block :}
+![ALL](/ml_comprobofinal/img/LSTM_ALL_05_010.gif){: .mx-auto.d-block :}
