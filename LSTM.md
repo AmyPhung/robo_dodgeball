@@ -5,7 +5,7 @@ subtitle: Long Short Term Memory Network
 ---
 
 #### LSTM Crash Course / Application
-__**[See this blog post to read more about why we were interested in LSTM models](https://everardog.github.io/ml_comprobofinal/2020-12-06-timing-is-everything/)**__
+__*[See this blog post to read more about why we were interested in LSTM models](https://everardog.github.io/ml_comprobofinal/2020-12-06-timing-is-everything/)*__
 
 ####  Training
 The LSTM model requires a unique format of input data to train. If you remember correctly, we have time series data that contains motor commands,  ball positions and velocities at a given time. The LSTM model takes in a chunk's worth of time to predict ONE output. In our case the chunk of time will include the ball positions and velocities. And we will be working to predict motor commands.
@@ -33,4 +33,4 @@ __Robot running via ML using a 5 timestep and 15 neuron network__
 
 ![LSTM 5_15](/ml_comprobofinal/img/LSTM_05_15.gif)
 
-#####__[View our blog post to see our various models running!](https://everardog.github.io/ml_comprobofinal/2020-12-15-LSTM_models/)__
+##### __*[View our results blog post to see our various models running!](https://everardog.github.io/ml_comprobofinal/2020-12-15-LSTM_models/)*__
