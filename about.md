@@ -5,14 +5,22 @@ subtitle: questionable info about a questionable team
 ---
 test2
 <style>
- .grid {
+.grid {
   display: flex;
- }
-.col-1-3 {
+}
+.single-col {
   flex: 1;
 }
-.cole-1-3:last-child {
+.single-col:last-child {
   margin-left: 20px;
+  margin-right: 20px;
+}
+.double-col {
+  flex: 2;
+}
+.double-col:last-child {
+  margin-left: 20px;
+  margin-right: 20px;
 }
 
 
@@ -30,27 +38,31 @@ img {
   height: 100%;
   width: auto;
 }
-
-@import "{{ site.theme }}";
-
-.page {
-  width: 170%
-}
 </style>
 
 <div class="grid">
-    <div class="col-1-3">
+    <div class="single-col">
        <div class="content">
            <center>
               <div class="image-cropper">
                 <img src="/ml_comprobofinal/img/ever.jpeg" class="rounded" />
               </div>
-              <p>
+           </center>
+       </div>
+    </div>
+    <div class="double-col">
+       <div class="content">
+           <center>
+               <p>
 Ever is our Pytorch expert. He has experience with ROS and ML and is always excited to overscope a project (think a drone dodging balls in 3d). Ever is known for dropping off calls because of his spotty wifi or because he forgot to boot into ubuntu. His favorite ice cream is Mint Chocolate Chip and his favorite web browser is Reddit 
 </p>
            </center>
        </div>
     </div>
+ 
+
+ 
+ 
     <div class="col-1-3">
        <div class="content">
            <center>
