@@ -2,6 +2,7 @@
 layout: page
 title: Robo Dodgeball
 subtitle: (with machine learning)
+cover-img: /ml_comprobofinal/img/dodgeball2.jpg
 ---
 
 ## Project Overview
