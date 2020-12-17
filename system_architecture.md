@@ -1,3 +1,9 @@
+---
+layout: page
+title: System Architecture
+subtitle: A detailed look at the major components of the project
+---
+
 ## System Overview  (What are the major components to your system and how do they fit together?)
 At a super high level - we use ROS, neato simulator, gazebo, written in python, launch files, etc.
 Our system is broken into several categories, that each are made up of smaller parts:
@@ -10,9 +16,9 @@ Our system is broken into several categories, that each are made up of smaller p
 - Generating model training data
 - Creating and managing the dodgeball simulation
 
+<img src="/ml_comprobofinal/img/system_diagram.png" width="1500"/>
+
 These systems are broken down into finer detail in the sections below.
-
-
 
 ## System Architecture 
 ### Ball Spawner 
