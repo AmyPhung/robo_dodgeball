@@ -34,8 +34,7 @@ This boils down to several things:
 
 For our purposes, we are interested in balls spawning in several different scenarios. The reason for  building a robust ball spawner is so the difficulty of our problem can easily be scaled. For example: we were interested in making a system that dodged single balls at a time as well as a system that dodged multiple.
 
-To implement this we use a singular ROS node that uses [Gazebo Services](http://gazebosim.org/tutorials/?tut=ros_comm#Services:Createanddestroymodelsinsimulation)
-Gazebo services allows for easy creation and deletion of gazebo models (aka dodgeballs). 
+To implement this we use a singular ROS node that uses [Gazebo Services](http://gazebosim.org/tutorials/?tut=ros_comm#Services:Createanddestroymodelsinsimulation). Gazebo Services allows for easy creation and deletion of gazebo models (aka dodgeballs). 
 
 Our modeling success depends directly on the quality of our training data. This means that the ball spawner needs to produce a wide variety of output. The method we used to do this is to spawn balls randomly within a certain range of the robot, and with a random velocity that was constrained by other parameters. This allows for the ball spawner to spawn, completely random balls, balls that only go straight, and one’s that target the robot. 
 
