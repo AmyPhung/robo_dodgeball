@@ -10,6 +10,7 @@ subtitle: questionable info about a questionable team
 }
 .single-col {
   flex: 1;
+  align-items: center;
 }
 .single-col:last-child {
   margin-left: 20px;
@@ -21,14 +22,6 @@ subtitle: questionable info about a questionable team
 .double-col:last-child {
   margin-left: 20px;
   margin-right: 20px;
-}
-
-.vertical-center {
-  margin: 0;
-  position: absolute;
-  top: 50%;
-  -ms-transform: translateY(-50%);
-  transform: translateY(-50%);
 }
 
 .image-cropper {
@@ -50,12 +43,10 @@ img {
 <div class="grid">
     <div class="single-col">
        <div class="content">
-           <div class="vertical-center">
-              <div class="image-cropper">
-                <img src="/ml_comprobofinal/img/ever.jpeg" class="rounded" />
-              </div>
-             <h4> Everardo Gonzalez </h4>
-           </div>
+            <div class="image-cropper">
+              <img src="/ml_comprobofinal/img/ever.jpeg" class="rounded" />
+            </div>
+           <h4> Everardo Gonzalez </h4>
        </div>
     </div>
     <div class="double-col">
