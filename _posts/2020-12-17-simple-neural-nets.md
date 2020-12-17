@@ -16,11 +16,12 @@ Let's start by taking a look at the results from each model
 ![Good results from 2-layer model](/ml_comprobofinal/img/standard_987_good.gif)
 
 ## Commentary
-Generally, the 2-layer model performed a bit better than the 1-layer model, and the robot's output behavior is visibly different between the two - the 1-layer model seems to move at more or less a constant velocity magnitude It's interesting to note that both models were able to imitate human reflexes in addition to learning that we wanted it to dodge the balls. It's difficult to get an intuitive sense of exactly how this is computed in the two-layer case, but we can look at the weights from the one-layer case to get a sense of how the network encoded this behavior. The weights for the 1-layer case were:
+Generally, the 2-layer model performed a bit better than the 1-layer model, and the robot's output behavior is visibly different between the two - the 1-layer model seems to move at more or less a constant magnitude of velocity, while the 2-layer model is clearly nonlinear  It's interesting to note that both models were able to imitate human reflexes in addition to learning that we wanted it to dodge the balls. It's difficult to get an intuitive sense of exactly how this is computed in the two-layer case, but we can look at the weights from the one-layer case to get a sense of how the network encoded this behavior. The weights for the 1-layer case were:
 ```
 [-1.2466,  0.2136,  0.0509, -0.0623, -0.7231]
 px         py       vx      vy       bias
 ```
+
 this is happening, but we can look at the simple case where we just have a 1 layer. This simple net has a similar behavior as the more complicated one, so let’s take a closer look at the output weights
 
 It's also interesting to see 
