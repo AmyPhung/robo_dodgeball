@@ -1,6 +1,6 @@
 ---
 layout: post
-title: What would we change
+title: What Would We Change
 subtitle: ...mistakes were made
 #cover-img: /assets/img/path.jpg
 #thumbnail-img: /assets/img/thumb.png
