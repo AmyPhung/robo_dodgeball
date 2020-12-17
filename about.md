@@ -4,9 +4,6 @@ title: About Us
 subtitle: go away stalkers
 ---
 
-todo
-
-
 <style>
  .grid {
   display: flex;
@@ -40,9 +37,9 @@ img {
        <div class="content">
            <center>
               <div class="image-cropper">
-                <img src="https://via.placeholder.com/150" class="rounded" />
+                <img src="/ml_comprobofinal/img/ever.jpeg" class="rounded" />
               </div>
-              <p>...insert content left side...</p>
+              <p>Stuff about Ever</p>
            </center>
        </div>
     </div>
