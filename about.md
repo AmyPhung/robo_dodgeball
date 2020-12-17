@@ -23,6 +23,13 @@ subtitle: questionable info about a questionable team
   margin-right: 20px;
 }
 
+.vertical-center {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
 
 .image-cropper {
   width: 100px;
@@ -43,12 +50,12 @@ img {
 <div class="grid">
     <div class="single-col">
        <div class="content">
-           <center>
+           <div class="vertical-center">
               <div class="image-cropper">
                 <img src="/ml_comprobofinal/img/ever.jpeg" class="rounded" />
               </div>
              <h4> Everardo Gonzalez </h4>
-           </center>
+           </div>
        </div>
     </div>
     <div class="double-col">
@@ -91,7 +98,7 @@ Amy Phung will probably solve climate change some day, but for now, she’s enjo
               <div class="image-cropper">
                 <img src="/ml_comprobofinal/img/nathan.jpg" class="rounded" />
               </div>
-             <h4> Everardo Gonzalez </h4>
+             <h4> Nathan Faber </h4>
            </center>
        </div>
     </div>
