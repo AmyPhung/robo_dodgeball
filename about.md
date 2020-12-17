@@ -55,7 +55,7 @@ img {
        <div class="content">
            <center>
                <p align="justify">
-Ever is our Pytorch expert. He has experience with ROS and ML and is always excited to overscope a project (think a drone dodging balls in 3d). Ever is known for dropping off calls because of his spotty wifi or because he forgot to boot into ubuntu. His favorite ice cream is Mint Chocolate Chip and his favorite web browser is Reddit 
+Ever is our Pytorch expert. He has experience with ROS and ML and is always excited to overscope a project (think a drone dodging balls in 3d). Ever is known for dropping off calls because of his spotty wifi or because he forgot to boot into Ubuntu. His favorite ice cream is Mint Chocolate Chip and his favorite web browser is Reddit 
 </p>
            </center>
        </div>
@@ -76,7 +76,7 @@ Ever is our Pytorch expert. He has experience with ROS and ML and is always exci
     <div class="double-col">
        <div class="content">
            <center>
-               <p align="justify">
+               <p align="justify" margin-top:0>
 Amy Phung will probably solve climate change some day, but for now, she’s enjoying the finer things in life, like coffee ice cream and grad school applications. It’s worth noting that while she enjoys coffee ice cream, she does not enjoy coffee itself. While that may come as a shock, the real kicker is that she’s also a morning person. When she’s not found holding her iconic “Will develop robots for PhD” sign made of cardboard, she’s found developing robots for her BS and for her own amusement. Were we to implement the dodging algorithm in real life, it would probably go on her ROS-enabled Roomba. Yup, you read that right. She added ROS to a roomba.
 </p>
            </center>
