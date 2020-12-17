@@ -7,6 +7,7 @@ subtitle: questionable info about a questionable team
 <style>
 .grid {
   display: flex;
+  margin-top: 1em
 }
 .single-col {
   flex: 1;
