@@ -12,10 +12,10 @@ and
 Using these models, we were able to train a differential drive robot to dodge balls with some degree of success. 
 
 #### LSTM:
-<img src="/img/LSTM_08_10_NICE.gif" width="1500"/>
+<img src="/ml_comprobofinal/img/LSTM_08_10_NICE.gif" width="1500"/>
 
 #### Standard:
-<img src="/img/standard_987_good.gif" width="1500"/>
+<img src="/ml_comprobofinal/img/standard_987_good.gif" width="1500"/>
 
 Interestingly enough, in addition to learning how to dodge balls, the models appear to have learned to emulate human reflexes too! 
 
