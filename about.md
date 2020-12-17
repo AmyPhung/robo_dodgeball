@@ -39,7 +39,9 @@ img {
               <div class="image-cropper">
                 <img src="/ml_comprobofinal/img/ever.jpeg" class="rounded" />
               </div>
-              <p>Stuff about Ever</p>
+              <p>
+Ever is our Pytorch expert. He has experience with ROS and ML and is always excited to overscope a project (think a drone dodging balls in 3d). Ever is known for dropping off calls because of his spotty wifi or because he forgot to boot into ubuntu. His favorite ice cream is Mint Chocolate Chip and his favorite web browser is Reddit 
+</p>
            </center>
        </div>
     </div>
