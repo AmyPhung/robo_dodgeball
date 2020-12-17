@@ -4,8 +4,11 @@ title: System Architecture
 subtitle: A detailed look at the major components of the project
 ---
 
-## System Overview  (What are the major components to your system and how do they fit together?)
-At a super high level - we use ROS, neato simulator, gazebo, written in python, launch files, etc.
+## Overview
+This project was built using a combination of ROS, Gazebo, and Python. We primarily built our project around the  
+[neato simulator](https://github.com/comprobo20/comprobo20/tree/master/neato_gazebo)
+to use for testing, but with a few adjustments to ROS parameters, our project should be easily portable to any robotics platform.
+
 Our system is broken into several categories, that each are made up of smaller parts:
 - ML Network 
 - Training the network
