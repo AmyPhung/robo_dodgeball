@@ -33,7 +33,7 @@ subtitle: questionable info about a questionable team
   border-radius: 50%;
 }
 .content p{
-    margin-top: 0
+    margin-top: 0;
     text-align: justify;
 }
 img {
@@ -102,7 +102,7 @@ Amy Phung will probably solve climate change some day, but for now, she’s enjo
     <div class="double-col">
        <div class="content">
            <center>
- <p]> Nathan is a self-proclaimed "coconut ice cream kind of guy" and hails from the great state of Oregon (and for some reason chose to go to a college that's buried under snow at the time of writing). He's an avid adventurer (I mean look at that #scenic #nature #hiking photo) and was voted to be the team's probably-the-least-couch-potato member. He's also a multi-talented and accomplished individual who does everything from biking to juggling to sailing, and somehow finds the time to also be a world-class roboticist on top of it all.</p>
+ <p> Nathan is a self-proclaimed "coconut ice cream kind of guy" and hails from the great state of Oregon (and for some reason chose to go to a college that's buried under snow at the time of writing). He's an avid adventurer (I mean look at that #scenic #nature #hiking photo) and was voted to be the team's probably-the-least-couch-potato member. He's also a multi-talented and accomplished individual who does everything from biking to juggling to sailing, and somehow finds the time to also be a world-class roboticist on top of it all.</p>
            </center>
        </div>
     </div>
