@@ -31,7 +31,9 @@ subtitle: questionable info about a questionable team
   overflow: hidden;
   border-radius: 50%;
 }
-
+.content p{
+    margin-top: 0
+}
 img {
   display: inline;
   margin: 0 auto;
