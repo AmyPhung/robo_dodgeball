@@ -11,21 +11,28 @@ todo
  .grid {
   display: flex;
  }
-.col-1-2 {
+.col-1-3 {
   flex: 1;
 }
-.cole-1-2:last-child {
+.cole-1-3:last-child {
   margin-left: 20px;
 }
 </style>
 
 <div class="grid">
-    <div class="col-1-2">
+    <div class="col-1-3">
        <div class="content">
-           <p>...insert content left side...</p>
+           <center>
+              <p>...insert content left side...</p>
+           </center>
        </div>
     </div>
-    <div class="col-1-2">
+    <div class="col-1-3">
+       <div class="content">
+           <p>...insert content right side...</p>
+       </div>
+    </div>
+    <div class="col-1-3">
        <div class="content">
            <p>...insert content right side...</p>
        </div>
