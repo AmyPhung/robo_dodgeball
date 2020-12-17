@@ -15,7 +15,6 @@ Let's start by taking a look at the results from each model
 #### 2-Layer
 ![Good results from 2-layer model](/ml_comprobofinal/img/standard_987_good.gif)
 
-## Commentary
 Generally, the 2-layer model performed a bit better than the 1-layer model, and the robot's output behavior is visibly different between the two - the 1-layer model seems to move at more or less a constant magnitude of velocity, while the 2-layer model is clearly nonlinear and seems to have learned how to accelerate.
 
 It's also interesting to note that both models were able to imitate human reflexes in addition to learning that we wanted it to dodge the balls. It's difficult to get an intuitive sense of exactly how this is computed in the two-layer case, but we can look at the weights from the one-layer case to get a sense of how the network encoded this behavior. The weights for the 1-layer case were:
@@ -38,30 +37,8 @@ This also results in some interesting behavior when a ball is coming from one si
 
 In these "diagonal" cases, the robot initially moves forward since the ball is behind it, but when it crosses the robot's y-axis, the robot begins to move backwards since the ball is now in front of it. Although it is unlikely that the 1-layer model would be able to encode this case in a more intelligent manner, with lots of data on this specific edge case, a model with more layers should be able to handle this situation.
 
-Although we can't easily understand the weights for the multi-layer model, based on the similarities between the two models, we can infer that the multi-layer model learned similar features as the 1-layer model. It's also interesting to see that the multi-layer model was able to learn how to handle certain head-on we can infer thafor 2 layersbut we can look at the simple case where we just have a 1 layer. This simple net has a similar behavior as the more complicated one, so let’s take a closer look at the output weights
+Although we can't easily understand the weights for the multi-layer model, based on the similarities between the two models, we can infer that the multi-layer model learned similar features as the 1-layer model. It's also interesting to see that the multi-layer model was able to learn how to handle certain head-on cases
+![Good results from multi-layer model](/ml_comprobofinal/img/standard_987_straight_dodge.gif)
+With the data we're currently giving the model, head-on cases are challenging since our training data is inconsistent for these cases - sometimes, I'd train it to take a hard right, and other times I'd train it to take a hard left. A potential improvement on this in the future would be to train the direction and magnitude of the robot command separately, which might help it figure out this edge case.
 
-It's also interesting to see 
-
-Another extention of this - diagonal balls
-
-## Ball location
-
-
-
-Taking a closer look at our model, it’s clear that it works well when balls come at it from the right or the left, but it struggles when the balls come at it head on
-[insert gif here]
-
-
-It would be difficult to visualize a more complicated neural network with several layers to understand why this is happening, but we can look at the simple case where we just have a 1 layer. This simple net has a similar behavior as the more complicated one, so let’s take a closer look at the output weights
-```
-[-1.2466,  0.2136,  0.0509, -0.0623, -0.7231]
-px         py       vx      vy      bias
-```
-
-We can see here that the primary driver is the px value - if the ball comes from right, this net outputs a strong command to drive to the left.
-
-It’s also interesting that this net seemed to learn about human reflexes - it pauses a bit before making a move
-[insert gif here]
-Interestingly enough, these output weights do also tell that story - between the bias term and the py - py’s average max value was approximately 3, and 0 meant that the robot was about to get hit. It’s worth noting that 3*0.2136 (py weight) approximately equals 0.7231 (magnitude of the bias term), which means that when the ball is far away the bias attempts to negate the effect of the y position. However, as the ball gets closer, the signal becomes more negative, encouraging the robot to move to the left.
-Interesting to note the nonlinear behavior
-
+That's all for this post folks! Thanks for reading
