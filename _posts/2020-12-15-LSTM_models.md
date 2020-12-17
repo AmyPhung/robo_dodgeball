@@ -15,7 +15,8 @@ The data for the corresponding models can be seen in the following figure:
 
 ## In Action
 The above loss figure does not always provide the best picture of how a model performs. Below are screen captures of the various different models.
-***__Disclaimer: These are short clips and not representative of the absolute behaviour__***
+
+__*Disclaimer: These are short clips and not representative of the absolute behaviour*__
 
 
 __5 timesteps 6 "neurons"__
