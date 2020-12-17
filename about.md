@@ -3,7 +3,7 @@ layout: page
 title: About Us
 subtitle: questionable info about a questionable team
 ---
-test1
+test2
 <style>
  .grid {
   display: flex;
@@ -34,7 +34,7 @@ img {
 @import "{{ site.theme }}";
 
 .page {
-  width: 100%
+  width: 170%
 }
 </style>
 
