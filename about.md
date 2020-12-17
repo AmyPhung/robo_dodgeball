@@ -17,24 +17,53 @@ todo
 .cole-1-3:last-child {
   margin-left: 20px;
 }
+
+
+.image-cropper {
+  width: 100px;
+  height: 100px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+img {
+  display: inline;
+  margin: 0 auto;
+  height: 100%;
+  width: auto;
+}
 </style>
 
 <div class="grid">
     <div class="col-1-3">
        <div class="content">
            <center>
+              <div class="image-cropper">
+                <img src="https://via.placeholder.com/150" class="rounded" />
+              </div>
               <p>...insert content left side...</p>
            </center>
        </div>
     </div>
     <div class="col-1-3">
        <div class="content">
-           <p>...insert content right side...</p>
+           <center>
+              <div class="image-cropper">
+                <img src="https://via.placeholder.com/150" class="rounded" />
+              </div>
+              <p>...insert content left side...</p>
+           </center>
        </div>
     </div>
     <div class="col-1-3">
        <div class="content">
-           <p>...insert content right side...</p>
+           <center>
+              <div class="image-cropper">
+                <img src="https://via.placeholder.com/150" class="rounded" />
+              </div>
+              <p>...insert content left side...</p>
+           </center>
        </div>
     </div>
 </div>
