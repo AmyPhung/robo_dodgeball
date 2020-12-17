@@ -19,7 +19,7 @@ navbar-links:
     - LSTM: "LSTM"
   System Architecture: "system_architecture"
   Blog: "blog"
-#  About Us: "about"
+  About Us: "about"
 
 # --- Logo --- #
 
