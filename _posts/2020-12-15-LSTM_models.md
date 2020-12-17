@@ -40,7 +40,7 @@ __5 timesteps 20 "neurons"__
 
 __8 timesteps 10 "neurons"__
 
-![08-010](/ml_comprobofinal/img/LSTM_08_010_NICE.gif){: .mx-auto.d-block :}
+![08-010](/ml_comprobofinal/img/LSTM_08_10_NICE.gif){: .mx-auto.d-block :}
 
 __8 timesteps 15 "neurons"__
 
