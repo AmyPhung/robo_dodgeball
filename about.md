@@ -25,8 +25,8 @@ subtitle: questionable info about a questionable team
 }
 
 .image-cropper {
-  width: 100px;
-  height: 100px;
+  width: 150px;
+  height: 150px;
   position: relative;
   overflow: hidden;
   border-radius: 50%;
