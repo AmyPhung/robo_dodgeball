@@ -12,15 +12,15 @@ Let's start by taking a look at the results from each model
 
 ## The Good
 #### 1-Layer
-![](/ml_comprobo/standard_990_good.gif)
+![Good results from 1-layer model](/ml_comprobo/standard_990_good.gif)
 #### 2-Layer
-![](/ml_comprobo/standard_987_good.gif)
+![Good results from 2-layer model](/ml_comprobo/standard_987_good.gif)
 
 ## The Bad
 #### 1-Layer
-![](/ml_comprobo/standard_990_bad.gif)
+![Bad results from 1-layer model](/ml_comprobo/standard_990_bad.gif)
 #### 2-Layer
-![](/ml_comprobo/standard_987_bad.gif)
+![Bad results from 2-layer model](/ml_comprobo/standard_987_bad.gif)
 
 
  this is happening, but we can look at the simple case where we just have a 1 layer. This simple net has a similar behavior as the more complicated one, so let’s take a closer look at the output weights
