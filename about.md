@@ -30,6 +30,12 @@ img {
   height: 100%;
   width: auto;
 }
+
+@import "{{ site.theme }}";
+
+.inner {
+  max-width: 150%;
+}
 </style>
 
 <div class="grid">
