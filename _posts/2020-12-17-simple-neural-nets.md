@@ -23,15 +23,22 @@ It's also interesting to note that both models were able to imitate human reflex
 [-1.2466,  0.2136,  0.0509, -0.0623, -0.7231]
 px         py       vx      vy       bias
 ```
-Interestingly enough, these output weights do also tell that story - py’s average value was approximately 3 when the balls were really far away while 0 meant that the robot was about to get hit. It’s worth noting that 3x0.2136 (py weight) approximately equals 0.7231 (magnitude of the bias term), which means that when the ball is far away the bias attempts to negate the effect of the y position. However, as the ball gets closer, the signal's magnitude increases, encouraging the robot to move. In this case, it chose to go left (the bias term is negative), which is likely indiciative of the fact that the dataset contained more left-moves than right-moves.
+Interestingly enough, these output weights do also tell that story - `py`’s average value was approximately 3 when the balls were really far away while `0` meant that the robot was about to get hit. It’s worth noting that `3*0.2136` (`py` weight) approximately equals `0.7231` (magnitude of the bias term), which means that when the ball is far away the bias attempts to negate the effect of the `y` position. However, as the ball gets closer, the signal's magnitude increases, encouraging the robot to move. In this case, it chose to go left (the bias term is negative), which is likely indiciative of the fact that the dataset contained more left-moves than right-moves.
 
 These output weights also tell the story of another interesting behavior - the fact that the robot doesn't handle balls aimed right at it very well. This looks a bit like this:
 #### 1-Layer
-![Bad results from 1-layer model](/ml_comprobofinal/img/standard_990_bad.gif)
+![Bad results from 1-layer model](/ml_comprobofinal/img/standard_990_straight_dodge.gif)
 #### 2-Layer
 ![Bad results from 2-layer model](/ml_comprobofinal/img/standard_987_bad.gif)
 
-In both of these cases, the robot doesn't react to the ball headed straight towards this. Looking at our weightsthis is happening, but we can look at the simple case where we just have a 1 layer. This simple net has a similar behavior as the more complicated one, so let’s take a closer look at the output weights
+In both of these cases, the robot doesn't react to the ball headed straight towards it until it almost gets hit. For our 1-layer model, we can look at the weights to understand why this is happening - the px value is the strongest weight (i.e. it has the largest magnitude), which means that the difference between the ball and the robot's x position is the biggest driver to the robot's behavior. When the ball is moving straight towards the robot, however, the difference in their x positions is essentially 0, which results in the robot getting hit.
+
+This also results in some interesting behavior when a ball is coming from one side of the robot but is headed to the opposite side.
+![Diagonal results from 1-layer model](/ml_comprobofinal/img/standard_990_diagonal.gif)
+
+In these "diagonal" cases, the robot initially moves forward since the ball is behind it, but when it crosses the robot's y-axis, the robot begins to move backwards since the ball is now in front of it. Although it is unlikely that the 1-layer model would be able to encode this case in a more intelligent manner, with lots of data on this specific edge case, a model with more layers should be able to handle this situation.
+
+Although we can't easily understand the weights for the multi-layer model, based on the similarities between the two models, we can infer that the multi-layer model learned similar features as the 1-layer model. It's also interesting to see that the multi-layer model was able to learn how to handle certain head-on we can infer thafor 2 layersbut we can look at the simple case where we just have a 1 layer. This simple net has a similar behavior as the more complicated one, so let’s take a closer look at the output weights
 
 It's also interesting to see 
 
