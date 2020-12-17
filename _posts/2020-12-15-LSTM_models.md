@@ -48,7 +48,7 @@ __8 timesteps 15 "neurons"__
 
 __8 timesteps 20 "neurons"__
 
-![08-020](/ml_comprobofinal/img/LSTM_08_020.gif){: .mx-auto.d-block :}
+![08-020](/ml_comprobofinal/img/LSTM_08_20.gif){: .mx-auto.d-block :}
 
 __10 timesteps 15 "neurons"__
 
