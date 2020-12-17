@@ -67,3 +67,6 @@ node - we took the node available at that repo and added “start” and “stop
 
 Our joystick-based controller node was a modified version of Amy’s teleop code from her 
 [warmup project](https://github.com/AmyPhung/warmup_project/blob/master/scripts/teleop.py), with minor edits to also add “start” and “stop” keybindings to it. Instead of the ‘s’ and spacebar keys, however, “start” and “stop” were bound to the ‘A’ and ‘B’ buttons, respectively. This was tested on an Xbox 360 controller, which was used to record most of our continuous datasets. This teleop code should work with other controllers as well, but the exact buttons may vary based on the type of controller.
+
+### ML Networks
+[Please see our other documentation about the ML networks created](https://everardog.github.io/ml_comprobofinal/system_architecture/#)
