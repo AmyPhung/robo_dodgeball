@@ -2,10 +2,11 @@
 layout: page
 title: Robo Dodgeball
 subtitle: (with machine learning)
-image: /ml_comprobofinal/img/dodgeball2.jpg
-share-img: /ml_comprobofinal/img/dodgeball2.jpg
-bigimg: /ml_comprobofinal/img/dodgeball2.jpg
+image: https://github.com/EverardoG/ml_comprobofinal/blob/gh-pages/img/dodgeball2.jpg
+share-img: https://github.com/EverardoG/ml_comprobofinal/blob/gh-pages/img/dodgeball2.jpg
+bigimg: https://github.com/EverardoG/ml_comprobofinal/blob/gh-pages/img/dodgeball2.jpg
 ---
+temp
 
 ## Project Overview
 For our final project, we wanted to get more experience with applying machine learning to learn a control policy in robots, so we chose dodgeball as our area of focus due to how scalable it was - we could start with a simple model where a simple differential drive robot learns how to dodge a ball thrown straight at it, and could go as far as implementing this on a drone with balls thrown at it from all directions. Ultimately, we were able to train two different types of models using imitation learning, where we recorded a dataset of us playing dodgeball then trained the model to imitate what we did. Over the course of this project, we looked into 
