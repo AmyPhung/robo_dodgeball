@@ -28,13 +28,13 @@ We decided to add an intermediate layer and an activation function to use betwee
 We also realized that it could be potentially quite useful to be able to be able to specifically try out specific cases more granularly than we could with the Gazebo simulation. To this end, we built a visualizer with a simple GUI that allowed us to specify two ball states with a visual representation of what those ball states would actually look like and a visualization of what the network output as a robot velocity. In addition to this, we added a simple plot utility that would show us the loss of the network over time. This made it possible for us to quickly check whether the network was actually learning anything, and whether it was overfitting to our training data.
 
 This is what our gui looked like in Google Colab.
-<img src="/ml_comprobofinal/img/colab_gui.jpg" width="1500"/>
+<img src="/ml_comprobofinal/img/colab_gui.png" width="1500"/>
 All we had to do was move the sliders for the different ball positions, velocities, and robot positions, and then we would see a green arrow at the bottom that indicated where the robot was going to move in response to those inputs and how fast.
 
 To implement this in Gazebo, we added an option to our main processing node to load in a pytorch model and use it to drive the robot. We also decided to port over the model training, the visualizer, and the plotting functionality into local Python scripts rather than separating them into Google Colab notebooks to make our workflow smoother.
 
 This is what the gui looked like when run locally.
-<img src="/ml_comprobofinal/img/local_gui.jpg" width="1500"/>
+<img src="/ml_comprobofinal/img/local_gui.png" width="1500"/>
 If you look at the values set by the sliders, you'll notice that they aren't nice floating point numbers. This is because we wanted an easy way to port the visualizer into a local script with minimal refactoring, and the best way we found to do this was through a minimal gui provided by OpenCV. Unfortunately, the sliders in this gui only accept positive integers as inputs. Hence, the seemingly arbitrary slider values. To help with actually using the visualizer, the terminal prints out the state of the entire system in a human readable format.
 
 One of the things we realized when we were visualizing our cases was that two balls could have the same angle of attack but actually have two completely different states. This made it quite confusing for us to parse results, and it made it difficult for the newtork to learn a good control policy. The network can't make good generalizations if two unique cases are presented as though they're the same case.
